@@ -1,0 +1,44 @@
+$darkBlueTeam: #3f51b5;
+$darkRedTeam: #4caf50;
+
+
+.blue-team-background {
+    background-color: $darkBlueTeam;
+}    
+.red-team-background {
+    background-color: $darkRedTeam;
+}
+.blue-team-content {
+    color: $darkBlueTeam;
+}    
+.red-team-content {
+    color: $darkRedTeam;
+}
+
+.fill-view-limit {
+    height: calc(100vh - 115.38px);
+    padding-bottom: var(--separationMargin);
+}
+
+.apex-chart {    
+    min-height: 390px;
+
+    mat-card {        
+        overflow: hidden;
+    }
+    div.matero-col {
+        margin-bottom: var(--separationMargin);
+    }
+    table {
+        border-radius: 4px;
+
+        &.blue-team {
+            border: 1px solid $darkBlueTeam;
+            background-color: $darkBlueTeam;
+        }
+        &.red-team {
+            border: 1px solid $darkRedTeam;
+            background-color: $darkRedTeam;
+        }
+    }
+}

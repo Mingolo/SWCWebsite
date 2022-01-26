@@ -1,0 +1,526 @@
+<breadcrumb></breadcrumb>
+
+
+<div fxLayout="column" class="matero-col fill-view-limit">
+    <div fxFlex="0 1 auto" class="matero-row">
+        <div fxLayout="row wrap" class="matero-row">
+            <div fxFlex="100%" fxFlex.gt-sm="50%" class="matero-col">
+                <mat-card class="blue-team-background">
+                    <mat-card-title>Blue Stormies</mat-card-title>
+                    <form [formGroup]="blueForm" class="form-field-full">
+                        <div fxLayout="row wrap" class="matero-row">
+                            <section fxFlex="100%" fxFlex.gt-sm="25%" class="matero-col">
+                                <h3>Squad Settings 
+                                    <button mat-icon-button>
+                                        <mat-icon color="accent">file_copy</mat-icon>
+                                    </button>
+                                </h3>
+                                <mat-form-field>
+                                    <mat-label>Squad Name</mat-label>
+                                    <input matInput formControlName="squadName" [(ngModel)]="fakeVar" required>
+                                </mat-form-field>
+                                <mat-form-field>
+                                    <mat-label>Squad Size</mat-label>
+                                    <input matInput formControlName="squadSize" type="number" min="1" step="1" [(ngModel)]="fakeVar" required>
+                                </mat-form-field>
+                                <mat-form-field>
+                                    <mat-label>Attack Range</mat-label>
+                                    <input matInput formControlName="range" type="number" min="0" max="21" step="1" [(ngModel)]="fakeVar" required>
+                                </mat-form-field>
+                                <mat-form-field class="w-full">
+                                    <mat-label>Starting Tactic</mat-label>
+                                    <mtx-select [items]="tactics" [(ngModel)]="fakeVar" formControlName="tactic1" required>
+                                    </mtx-select>
+                                </mat-form-field>
+                                <mat-form-field class="w-full">
+                                    <mat-label>Second Tactic</mat-label>
+                                    <mtx-select [items]="tactics" [(ngModel)]="fakeVar" formControlName="tactic2" required>
+                                    </mtx-select>
+                                </mat-form-field>
+                                <mat-form-field>
+                                    <mat-label>Switch to 2nd tactic on round...</mat-label>
+                                    <input matInput formControlName="switchRound" type="number" min="2" step="1" [(ngModel)]="fakeVar" required>
+                                </mat-form-field>
+                            </section>
+                            <section fxFlex="100%" fxFlex.gt-sm="25%" class="matero-col">
+                                <h3>Unit Stats 
+                                    <button mat-icon-button>
+                                        <mat-icon color="accent">file_copy</mat-icon>
+                                    </button>
+                                </h3>
+                                <div fxLayout="row wrap" class="matero-row">
+                                    <div fxFlex="50%" class="matero-col">
+                                        <mat-form-field>
+                                            <mat-label>Strength</mat-label>
+                                            <input matInput formControlName="strength" type="number" min="0" max="5" step="1" [(ngModel)]="fakeVar" required>
+                                        </mat-form-field>
+                                        <mat-form-field>
+                                            <mat-label>Dexterity</mat-label>
+                                            <input matInput formControlName="dex" type="number" min="0" max="5" step="1" [(ngModel)]="fakeVar" required>
+                                        </mat-form-field>
+                                        <mat-form-field>
+                                            <mat-label>Dodge</mat-label>
+                                            <input matInput formControlName="dodge" type="number" min="0" max="5" step="1" [(ngModel)]="fakeVar" required>
+                                        </mat-form-field>
+                                        <mat-form-field>
+                                            <mat-label>PW Skill</mat-label>
+                                            <input matInput formControlName="pwSkill" type="number" min="0" max="5" step="1" [(ngModel)]="fakeVar" required>
+                                        </mat-form-field>
+                                        <mat-form-field>
+                                            <mat-label>NPW Skill</mat-label>
+                                            <input matInput formControlName="npwSkill" type="number" min="0" max="5" step="1" [(ngModel)]="fakeVar" required>
+                                        </mat-form-field>
+                                    </div>
+                                    <div fxFlex="50%" class="matero-col">                                
+                                        <mat-slide-toggle class="form-manual-spacing" formControlName="isDroid" [(ngModel)]="blueIsDroid">
+                                            Is Droid
+                                        </mat-slide-toggle>
+                                        <div *ngIf="blueIsDroid">
+                                            <mat-form-field>
+                                                <mat-label>Hull</mat-label>
+                                                <input matInput formControlName="hull" type="number" min="0" step="1" [(ngModel)]="fakeVar" required>
+                                            </mat-form-field>
+                                            <mat-form-field>
+                                                <mat-label>Deflectors</mat-label>
+                                                <input matInput formControlName="deflectors" type="number" min="0" step="1" [(ngModel)]="fakeVar" required>
+                                            </mat-form-field>
+                                            <mat-form-field>
+                                                <mat-label>Ionic</mat-label>
+                                                <input matInput formControlName="ionic" type="number" min="0"step="1" [(ngModel)]="fakeVar" required>
+                                            </mat-form-field>
+                                        </div>
+                                        <div *ngIf="!blueIsDroid">
+                                            <mat-form-field>
+                                                <mat-label>Level</mat-label>
+                                                <input matInput formControlName="level" type="number" min="0" step="1" [(ngModel)]="fakeVar" required>
+                                            </mat-form-field>
+                                            <mat-form-field>
+                                                <mat-label>HP Mult</mat-label>
+                                                <input matInput formControlName="hpMult" type="number" min="0" step="1" [(ngModel)]="fakeVar" required>
+                                            </mat-form-field>
+                                            <mat-form-field>
+                                                <mat-label>Armor</mat-label>
+                                                <input matInput formControlName="armor" type="number" min="0" step="1" [(ngModel)]="fakeVar" required>
+                                            </mat-form-field>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                            <section fxFlex="100%" fxFlex.gt-sm="25%" class="matero-col">
+                                <h3>Primary Weapon 
+                                    <button mat-icon-button>
+                                        <mat-icon color="accent">file_copy</mat-icon>
+                                    </button>
+                                </h3>
+                                <mat-form-field class="w-full">
+                                    <mat-label>Weapon Class</mat-label>
+                                    <mtx-select [items]="weaponClasses" [(ngModel)]="fakeVar" formControlName="primaryClass" required>
+                                    </mtx-select>
+                                </mat-form-field>
+                                <mat-form-field class="w-full">
+                                    <mat-label>Damage Type</mat-label>
+                                    <mtx-select [items]="damageTypes" [(ngModel)]="fakeVar" formControlName="primaryType" required>
+                                    </mtx-select>
+                                </mat-form-field>
+                                <mat-slide-toggle class="form-manual-spacing" formControlName="primaryDualWield" [(ngModel)]="fakeVar">
+                                    Dual Wieldable
+                                </mat-slide-toggle>
+                                <div fxLayout="row wrap" class="matero-row">
+                                    <div fxFlex="50%" class="matero-col">
+                                        <mat-form-field>
+                                            <mat-label>Firepower</mat-label>
+                                            <input matInput formControlName="primaryFirepower" type="number" min="0" step="1" [(ngModel)]="fakeVar" required>
+                                        </mat-form-field>
+                                        <mat-form-field>
+                                            <mat-label>Min Damage</mat-label>
+                                            <input matInput formControlName="primaryMinDamage" type="number" min="0" step="1" [(ngModel)]="fakeVar" required>
+                                        </mat-form-field>
+                                        <mat-form-field>
+                                            <mat-label>Max Damage</mat-label>
+                                            <input matInput formControlName="primaryMaxDamage" type="number" min="0" step="1" [(ngModel)]="fakeVar" required>
+                                        </mat-form-field>
+                                    </div>
+                                    <div fxFlex="50%" class="matero-col">
+                                        <mat-form-field>
+                                            <mat-label>Opt. Range</mat-label>
+                                            <input matInput formControlName="primaryOptRange" type="number" min="0" step="1" [(ngModel)]="fakeVar" required>
+                                        </mat-form-field>
+                                        <mat-form-field>
+                                            <mat-label>Drop</mat-label>
+                                            <input matInput formControlName="primaryDropOff" type="number" min="0" step="1" [(ngModel)]="fakeVar" required>
+                                        </mat-form-field>
+                                        <mat-form-field>
+                                            <mat-label>Max Hits</mat-label>
+                                            <input matInput formControlName="primaryMaxHits" type="number" min="0" step="1" [(ngModel)]="fakeVar" required>
+                                        </mat-form-field>
+                                    </div>
+                                </div>
+                            </section>
+                            <section fxFlex="100%" fxFlex.gt-sm="25%" class="matero-col">
+                                <h3>Secondary Weapon 
+                                    <button mat-icon-button>
+                                        <mat-icon color="accent">file_copy</mat-icon>
+                                    </button>
+                                </h3>
+                                <mat-form-field class="w-full">
+                                    <mat-label>Weapon Class</mat-label>
+                                    <mtx-select [items]="weaponClasses" [(ngModel)]="fakeVar" formControlName="secondaryClass" required>
+                                    </mtx-select>
+                                </mat-form-field>
+                                <mat-form-field class="w-full">
+                                    <mat-label>Damage Type</mat-label>
+                                    <mtx-select [items]="damageTypes" [(ngModel)]="fakeVar" formControlName="secondaryType" required>
+                                    </mtx-select>
+                                </mat-form-field>
+                                <mat-slide-toggle class="form-manual-spacing" formControlName="secondaryDualWield" [(ngModel)]="fakeVar">
+                                    Dual Wieldable
+                                </mat-slide-toggle>
+                                <div fxLayout="row wrap" class="matero-row">
+                                    <div fxFlex="50%" class="matero-col">
+                                        <mat-form-field>
+                                            <mat-label>Firepower</mat-label>
+                                            <input matInput formControlName="secondaryFirepower" type="number" min="0" step="1" [(ngModel)]="fakeVar" required>
+                                        </mat-form-field>
+                                        <mat-form-field>
+                                            <mat-label>Min Damage</mat-label>
+                                            <input matInput formControlName="secondaryMinDamage" type="number" min="0" step="1" [(ngModel)]="fakeVar" required>
+                                        </mat-form-field>
+                                        <mat-form-field>
+                                            <mat-label>Max Damage</mat-label>
+                                            <input matInput formControlName="secondaryMaxDamage" type="number" min="0" step="1" [(ngModel)]="fakeVar" required>
+                                        </mat-form-field>
+                                    </div>
+                                    <div fxFlex="50%" class="matero-col">
+                                        <mat-form-field>
+                                            <mat-label>Opt. Range</mat-label>
+                                            <input matInput formControlName="secondaryOptRange" type="number" min="0" step="1" [(ngModel)]="fakeVar" required>
+                                        </mat-form-field>
+                                        <mat-form-field>
+                                            <mat-label>Drop</mat-label>
+                                            <input matInput formControlName="secondaryDropOff" type="number" min="0" step="1" [(ngModel)]="fakeVar" required>
+                                        </mat-form-field>
+                                        <mat-form-field>
+                                            <mat-label>Max Hits</mat-label>
+                                            <input matInput formControlName="secondaryMaxHits" type="number" min="0" step="1" [(ngModel)]="fakeVar" required>
+                                        </mat-form-field>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+                    </form>
+                </mat-card>
+            </div>
+
+            <div fxFlex="100%" fxFlex.gt-sm="50%" class="matero-col">
+                <mat-card class="red-team-background">
+                    <mat-card-title>Red Riflemen</mat-card-title>
+                    <form [formGroup]="redForm" class="form-field-full">
+                        <div fxLayout="row wrap" class="matero-row">
+                            <section fxFlex="100%" fxFlex.gt-sm="25%" class="matero-col">
+                                <h3>Squad Settings 
+                                    <button mat-icon-button>
+                                        <mat-icon color="accent">file_copy</mat-icon>
+                                    </button>
+                                </h3>
+                                <mat-form-field>
+                                    <mat-label>Squad Name</mat-label>
+                                    <input matInput formControlName="squadName" [(ngModel)]="fakeVar" required>
+                                </mat-form-field>
+                                <mat-form-field>
+                                    <mat-label>Squad Size</mat-label>
+                                    <input matInput formControlName="squadSize" type="number" min="1" step="1" [(ngModel)]="fakeVar" required>
+                                </mat-form-field>
+                                <mat-form-field>
+                                    <mat-label>Attack Range</mat-label>
+                                    <input matInput formControlName="range" type="number" min="0" max="21" step="1" [(ngModel)]="fakeVar" required>
+                                </mat-form-field>
+                                <mat-form-field class="w-full">
+                                    <mat-label>Starting Tactic</mat-label>
+                                    <mtx-select [items]="tactics" [(ngModel)]="fakeVar" formControlName="tactic1" required>
+                                    </mtx-select>
+                                </mat-form-field>
+                                <mat-form-field class="w-full">
+                                    <mat-label>Second Tactic</mat-label>
+                                    <mtx-select [items]="tactics" [(ngModel)]="fakeVar" formControlName="tactic2" required>
+                                    </mtx-select>
+                                </mat-form-field>
+                                <mat-form-field>
+                                    <mat-label>Switch to 2nd tactic on round...</mat-label>
+                                    <input matInput formControlName="switchRound" type="number" min="2" step="1" [(ngModel)]="fakeVar" required>
+                                </mat-form-field>
+                            </section>
+                            <section fxFlex="100%" fxFlex.gt-sm="25%" class="matero-col">
+                                <h3>Unit Stats 
+                                    <button mat-icon-button>
+                                        <mat-icon color="accent">file_copy</mat-icon>
+                                    </button>
+                                </h3>
+                                <div fxLayout="row wrap" class="matero-row">
+                                    <div fxFlex="50%" class="matero-col">
+                                        <mat-form-field>
+                                            <mat-label>Strength</mat-label>
+                                            <input matInput formControlName="strength" type="number" min="0" max="5" step="1" [(ngModel)]="fakeVar" required>
+                                        </mat-form-field>
+                                        <mat-form-field>
+                                            <mat-label>Dexterity</mat-label>
+                                            <input matInput formControlName="dex" type="number" min="0" max="5" step="1" [(ngModel)]="fakeVar" required>
+                                        </mat-form-field>
+                                        <mat-form-field>
+                                            <mat-label>Dodge</mat-label>
+                                            <input matInput formControlName="dodge" type="number" min="0" max="5" step="1" [(ngModel)]="fakeVar" required>
+                                        </mat-form-field>
+                                        <mat-form-field>
+                                            <mat-label>PW Skill</mat-label>
+                                            <input matInput formControlName="pwSkill" type="number" min="0" max="5" step="1" [(ngModel)]="fakeVar" required>
+                                        </mat-form-field>
+                                        <mat-form-field>
+                                            <mat-label>NPW Skill</mat-label>
+                                            <input matInput formControlName="npwSkill" type="number" min="0" max="5" step="1" [(ngModel)]="fakeVar" required>
+                                        </mat-form-field>
+                                    </div>
+                                    <div fxFlex="50%" class="matero-col">                                
+                                        <mat-slide-toggle class="form-manual-spacing" formControlName="isDroid" [(ngModel)]="redIsDroid">
+                                            Is Droid
+                                        </mat-slide-toggle>
+                                        <div *ngIf="redIsDroid">
+                                            <mat-form-field>
+                                                <mat-label>Hull</mat-label>
+                                                <input matInput formControlName="hull" type="number" min="0" step="1" [(ngModel)]="fakeVar" required>
+                                            </mat-form-field>
+                                            <mat-form-field>
+                                                <mat-label>Deflectors</mat-label>
+                                                <input matInput formControlName="deflectors" type="number" min="0" step="1" [(ngModel)]="fakeVar" required>
+                                            </mat-form-field>
+                                            <mat-form-field>
+                                                <mat-label>Ionic</mat-label>
+                                                <input matInput formControlName="ionic" type="number" min="0"step="1" [(ngModel)]="fakeVar" required>
+                                            </mat-form-field>
+                                        </div>
+                                        <div *ngIf="!redIsDroid">
+                                            <mat-form-field>
+                                                <mat-label>Level</mat-label>
+                                                <input matInput formControlName="level" type="number" min="0" step="1" [(ngModel)]="fakeVar" required>
+                                            </mat-form-field>
+                                            <mat-form-field>
+                                                <mat-label>HP Mult</mat-label>
+                                                <input matInput formControlName="hpMult" type="number" min="0" step="1" [(ngModel)]="fakeVar" required>
+                                            </mat-form-field>
+                                            <mat-form-field>
+                                                <mat-label>Armor</mat-label>
+                                                <input matInput formControlName="armor" type="number" min="0" step="1" [(ngModel)]="fakeVar" required>
+                                            </mat-form-field>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                            <section fxFlex="100%" fxFlex.gt-sm="25%" class="matero-col">
+                                <h3>Primary Weapon 
+                                    <button mat-icon-button>
+                                        <mat-icon color="accent">file_copy</mat-icon>
+                                    </button>
+                                </h3>
+                                <mat-form-field class="w-full">
+                                    <mat-label>Weapon Class</mat-label>
+                                    <mtx-select [items]="weaponClasses" [(ngModel)]="fakeVar" formControlName="primaryClass" required>
+                                    </mtx-select>
+                                </mat-form-field>
+                                <mat-form-field class="w-full">
+                                    <mat-label>Damage Type</mat-label>
+                                    <mtx-select [items]="damageTypes" [(ngModel)]="fakeVar" formControlName="primaryType" required>
+                                    </mtx-select>
+                                </mat-form-field>
+                                <mat-slide-toggle class="form-manual-spacing" formControlName="primaryDualWield" [(ngModel)]="fakeVar">
+                                    Dual Wieldable
+                                </mat-slide-toggle>
+                                <div fxLayout="row wrap" class="matero-row">
+                                    <div fxFlex="50%" class="matero-col">
+                                        <mat-form-field>
+                                            <mat-label>Firepower</mat-label>
+                                            <input matInput formControlName="primaryFirepower" type="number" min="0" step="1" [(ngModel)]="fakeVar" required>
+                                        </mat-form-field>
+                                        <mat-form-field>
+                                            <mat-label>Min Damage</mat-label>
+                                            <input matInput formControlName="primaryMinDamage" type="number" min="0" step="1" [(ngModel)]="fakeVar" required>
+                                        </mat-form-field>
+                                        <mat-form-field>
+                                            <mat-label>Max Damage</mat-label>
+                                            <input matInput formControlName="primaryMaxDamage" type="number" min="0" step="1" [(ngModel)]="fakeVar" required>
+                                        </mat-form-field>
+                                    </div>
+                                    <div fxFlex="50%" class="matero-col">
+                                        <mat-form-field>
+                                            <mat-label>Opt. Range</mat-label>
+                                            <input matInput formControlName="primaryOptRange" type="number" min="0" step="1" [(ngModel)]="fakeVar" required>
+                                        </mat-form-field>
+                                        <mat-form-field>
+                                            <mat-label>Drop</mat-label>
+                                            <input matInput formControlName="primaryDropOff" type="number" min="0" step="1" [(ngModel)]="fakeVar" required>
+                                        </mat-form-field>
+                                        <mat-form-field>
+                                            <mat-label>Max Hits</mat-label>
+                                            <input matInput formControlName="primaryMaxHits" type="number" min="0" step="1" [(ngModel)]="fakeVar" required>
+                                        </mat-form-field>
+                                    </div>
+                                </div>
+                            </section>
+                            <section fxFlex="100%" fxFlex.gt-sm="25%" class="matero-col">
+                                <h3>Secondary Weapon 
+                                    <button mat-icon-button>
+                                        <mat-icon color="accent">file_copy</mat-icon>
+                                    </button>
+                                </h3>
+                                <mat-form-field class="w-full">
+                                    <mat-label>Weapon Class</mat-label>
+                                    <mtx-select [items]="weaponClasses" [(ngModel)]="fakeVar" formControlName="secondaryClass" required>
+                                    </mtx-select>
+                                </mat-form-field>
+                                <mat-form-field class="w-full">
+                                    <mat-label>Damage Type</mat-label>
+                                    <mtx-select [items]="damageTypes" [(ngModel)]="fakeVar" formControlName="secondaryType" required>
+                                    </mtx-select>
+                                </mat-form-field>
+                                <mat-slide-toggle class="form-manual-spacing" formControlName="secondaryDualWield" [(ngModel)]="fakeVar">
+                                    Dual Wieldable
+                                </mat-slide-toggle>
+                                <div fxLayout="row wrap" class="matero-row">
+                                    <div fxFlex="50%" class="matero-col">
+                                        <mat-form-field>
+                                            <mat-label>Firepower</mat-label>
+                                            <input matInput formControlName="secondaryFirepower" type="number" min="0" step="1" [(ngModel)]="fakeVar" required>
+                                        </mat-form-field>
+                                        <mat-form-field>
+                                            <mat-label>Min Damage</mat-label>
+                                            <input matInput formControlName="secondaryMinDamage" type="number" min="0" step="1" [(ngModel)]="fakeVar" required>
+                                        </mat-form-field>
+                                        <mat-form-field>
+                                            <mat-label>Max Damage</mat-label>
+                                            <input matInput formControlName="secondaryMaxDamage" type="number" min="0" step="1" [(ngModel)]="fakeVar" required>
+                                        </mat-form-field>
+                                    </div>
+                                    <div fxFlex="50%" class="matero-col">
+                                        <mat-form-field>
+                                            <mat-label>Opt. Range</mat-label>
+                                            <input matInput formControlName="secondaryOptRange" type="number" min="0" step="1" [(ngModel)]="fakeVar" required>
+                                        </mat-form-field>
+                                        <mat-form-field>
+                                            <mat-label>Drop</mat-label>
+                                            <input matInput formControlName="secondaryDropOff" type="number" min="0" step="1" [(ngModel)]="fakeVar" required>
+                                        </mat-form-field>
+                                        <mat-form-field>
+                                            <mat-label>Max Hits</mat-label>
+                                            <input matInput formControlName="secondaryMaxHits" type="number" min="0" step="1" [(ngModel)]="fakeVar" required>
+                                        </mat-form-field>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+                    </form>
+                </mat-card>
+            </div>
+        </div>
+    </div>
+
+    <div fxFlex="1 1 auto" class="matero-row apex-chart">
+        <div fxLayout="row wrap" class="matero-row h-full">
+            <div fxFlex="100%" fxFlex.gt-sm="50%" class="matero-col h-full">
+                <mat-card class="h-full">
+                    <section fxLayout="column" class="h-full">
+                        <mat-card-subtitle fxFlex="0 1 auto">Average Damage Based on Range</mat-card-subtitle>
+                        <div fxFlex="1 1 auto">
+                            <div id="damageRangeChart" class="h-full"></div>
+                        </div>
+                    </section>
+                </mat-card>
+            </div>
+            <div fxFlex="100%" fxFlex.gt-sm="50%" class="matero-col">
+                <mat-card>
+                    <div fxLayout="row wrap" class="matero-row m-b-16">
+                        <section fxFlex="100%" fxFlex.gt-sm="49%" class="matero-col">
+                            <h3>Blue Stormies</h3>
+                            <table class="spaced-out blue-team">
+                                <tr>
+                                    <td class="header-cell">Battles Won</td>
+                                    <td>{{blueResult.victories}}</td>
+                                </tr>
+                                <tr>
+                                    <td class="header-cell">Win Percentage</td>
+                                    <td>{{blueResult.percentage}}%</td>
+                                </tr>
+                                <tr>
+                                    <td class="header-cell">Average Units Left per Win</td>
+                                    <td>{{blueResult.unitsLeft}} of 0</td>
+                                </tr>
+                                <tr>
+                                    <td class="header-cell">Average Rounds to Win</td>
+                                    <td>{{blueResult.roundsTaken}}</td>
+                                </tr>
+                                <tr>
+                                    <td class="header-cell">Average Unit HP Left per Win</td>
+                                    <td>{{blueResult.hpLeft}} of 0</td>
+                                </tr>
+                                <tr>
+                                    <td class="header-cell">Average Unit Shields Left per Win</td>
+                                    <td>{{blueResult.shieldsLeft}} of 0</td>
+                                </tr>
+                                <tr>
+                                    <td class="header-cell">Average Unit Shields Left per Win</td>
+                                    <td>{{blueResult.ionicLeft}} of 0</td>
+                                </tr>
+                            </table>
+                        </section>
+                        <mat-divider [vertical]="true"></mat-divider>
+                        <section fxFlex="100%" fxFlex.gt-sm="49%" class="matero-col">
+                            <h3>Red Riflemen</h3>
+                            <table class="spaced-out red-team">
+                                <tr>
+                                    <td class="header-cell">Battles Won</td>
+                                    <td>{{redResult.victories}}</td>
+                                </tr>
+                                <tr>
+                                    <td class="header-cell">Win Percentage</td>
+                                    <td>{{redResult.percentage}}%</td>
+                                </tr>
+                                <tr>
+                                    <td class="header-cell">Average Units Left per Win</td>
+                                    <td>{{redResult.unitsLeft}} of 0</td>
+                                </tr>
+                                <tr>
+                                    <td class="header-cell">Average Rounds to Win</td>
+                                    <td>{{redResult.roundsTaken}}</td>
+                                </tr>
+                                <tr>
+                                    <td class="header-cell">Average Unit HP Left per Win</td>
+                                    <td>{{redResult.hpLeft}} of 0</td>
+                                </tr>
+                                <tr>
+                                    <td class="header-cell">Average Unit Shields Left per Win</td>
+                                    <td>{{redResult.shieldsLeft}} of 0</td>
+                                </tr>
+                                <tr>
+                                    <td class="header-cell">Average Unit Shields Left per Win</td>
+                                    <td>{{redResult.ionicLeft}} of 0</td>
+                                </tr>
+                            </table>
+                        </section>
+                    </div>                                            
+                    <div class="anchor"><mat-divider></mat-divider></div>
+                    <section fxLayout="row wrap" class="matero-row p-t-16">
+                        <table fxFlex="50%" class="matero-col spaced-out">
+                            <tr>
+                                <td>Number of Battles</td>
+                                <td><input matInput type="number" min="1" step="1" [(ngModel)]="fakeVar" required></td>
+                            </tr>
+                            <tr>
+                                <td>Ties</td><td>0</td>
+                            </tr>
+                        </table>
+                        <div fxFlex="50%" class="matero-col flex-center">                            
+                            <button mat-raised-button color="primary" [disabled]="!blueForm.valid || !redForm.valid">Simulate</button>
+                        </div>
+                    </section>
+                </mat-card>
+            </div>
+        </div>
+    </div>
+
+</div>

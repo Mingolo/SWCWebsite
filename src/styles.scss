@@ -1,0 +1,79 @@
+/* You can add global styles to this file, and also import other style files */
+@use 'app/theme/style';
+@use 'styles/themes';
+@use 'styles/custom';
+@use 'styles/grid';
+@use 'styles/helpers';
+@use 'styles/plugins';
+
+$darkBackgroundColor: #424242;
+$darkBorderColor: rgba(255, 255, 255, 0.12);
+$darkHeaderColor: rgba(255, 255, 255, 0.7);
+$darkContentColor: white;
+:root {
+    --smScreen: 600px;
+    --separationMargin: 16px
+}
+
+
+.form-manual-spacing {
+    margin-top: 1.19em;    
+    margin-bottom: 1.19em;
+}
+
+.anchor {
+    position: relative;
+}
+
+
+table {
+    background: $darkBackgroundColor;
+    font-family: Roboto, "Helvetica Neue", sans-serif;
+    display: block;
+
+    tr {
+        display: flex;
+        border-width: 0;
+        border-bottom-width: 1px;
+        border-style: solid;
+        align-items: center;
+        box-sizing: border-box;
+        min-height: 48px;        
+        border-bottom-color: $darkBorderColor;
+        background: inherit;        
+
+        td:first-of-type {
+            padding-left: 24px;
+        }
+
+        td {
+            $darkContentColor: white;
+            font-size: 14px;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+            word-wrap: break-word;
+            min-height: inherit;
+        }
+
+        .header-cell {
+            position: relative;
+            color: $darkHeaderColor;
+            font-size: 12px;
+            font-weight: 500;
+        }
+    }
+}
+
+table.spaced-out {
+    td {
+        padding-left: 24px;
+    }
+}
+
+.flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
