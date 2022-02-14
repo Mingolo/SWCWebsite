@@ -1,0 +1,82 @@
+import { Validators } from "@angular/forms";
+
+export enum DamageType {
+    PhysicalP = 'Physical (P)',
+    EnergyP = 'Energy (P)',
+    ExplosiveP = 'Explosive (P)',
+    IonicP = 'Ionic (P)',
+    Lightsaber = 'Lightsaber',
+    Poison = 'Poison',
+    Nonlethal = 'Nonlethal',
+    PhysicalH = 'Physical (H)',
+    EnergyH = 'Energy (H) ',
+    ExplosiveH = 'Explosive (H)',
+    Ionic = 'Ionic (H)',
+    ConcussiveH = 'Concussive (H)',
+    TurbolaserH = 'Turbolaser (H)',
+    EnergyO = 'Energy (O)',
+    IonicO = 'Ionic (O)'
+}
+
+export enum Tactic {
+  SpreadFire = 'Spread Fire',
+  FocusFire = 'Focus Fire'
+}
+
+export enum WeaponClass {
+  Projectile = 'Projectile',
+  NonProjectile = 'Non-Projectile',
+  HeavyProjectile = 'Heavy Projectile'
+}
+
+export const chartXAxis = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21"];
+
+export const statsForm = {
+  squadName: ['', [Validators.required]],
+  squadSize: ['', [Validators.required]],
+  range: ['', [Validators.required]],
+  tactic1: ['', [Validators.required]],
+  tactic2: ['', [Validators.required]],
+  switchRound: ['', [Validators.required]],
+  strength: ['', [Validators.required]],
+  dex: ['', [Validators.required]],
+  dodge: ['', [Validators.required]],
+  pwSkill: ['', [Validators.required]],
+  npwSkill: ['', [Validators.required]],
+  lightSkill: ['', [Validators.required]],
+  force: ['', [Validators.required]],
+  isDroid: ['', [Validators.required]],
+  hull: ['', [Validators.required]],
+  deflectors: ['', [Validators.required]],
+  ionic: ['', [Validators.required]],
+  level: ['', [Validators.required]],
+  hpMult: ['', [Validators.required]],
+  armor: ['', [Validators.required]],
+  primaryClass: ['', [Validators.required]],
+  primaryType: ['', [Validators.required]],
+  primaryDualWield: ['', [Validators.required]],
+  primaryFirepower: ['', [Validators.required]],
+  primaryMinDamage: ['', [Validators.required]],
+  primaryMaxDamage: ['', [Validators.required]],
+  primaryOptRange: ['', [Validators.required]],
+  primaryDropOff: ['', [Validators.required]],
+  primaryMaxHits: ['', [Validators.required]],
+  secondaryClass: ['', [Validators.required]],
+  secondaryType: ['', [Validators.required]],
+  secondaryDualWield: ['', [Validators.required]],
+  secondaryFirepower: ['', [Validators.required]],
+  secondaryMinDamage: ['', [Validators.required]],
+  secondaryMaxDamage: ['', [Validators.required]],
+  secondaryOptRange: ['', [Validators.required]],
+  secondaryDropOff: ['', [Validators.required]],
+  secondaryMaxHits: ['', [Validators.required]]
+};
+
+export const lsWeaponSkill = [
+  [0,1,1,1,2,2],
+  [1,1,2,2,2,3],
+  [2,2,2,3,3,3],
+  [2,3,3,3,3,4],
+  [3,3,3,4,4,4],
+  [3,4,4,4,5,5]
+];

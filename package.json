@@ -12,7 +12,8 @@
     "lint:ts": "eslint \"src/**/*.ts\" --fix",
     "lint:scss": "stylelint \"src/**/*.scss\" --fix",
     "hmr": "ng serve --hmr --disable-host-check",
-    "postinstall": "ngcc --properties es2015 browser module main --first-only --create-ivy-entry-points"
+    "postinstall": "ngcc --properties es2015 browser module main --first-only --create-ivy-entry-points",
+    "test:simulation": "ng test --include src/app/simulation"
   },
   "private": true,
   "dependencies": {

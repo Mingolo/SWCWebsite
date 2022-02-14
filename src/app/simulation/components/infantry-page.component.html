@@ -10,7 +10,7 @@
                     <form [formGroup]="blueForm" class="form-field-full">
                         <div fxLayout="row wrap" class="matero-row">
                             <section fxFlex="100%" fxFlex.gt-sm="25%" class="matero-col">
-                                <h3>Squad Settings 
+                                <h3>Squad Settings
                                     <button mat-icon-button>
                                         <mat-icon color="accent">file_copy</mat-icon>
                                     </button>
@@ -29,12 +29,12 @@
                                 </mat-form-field>
                                 <mat-form-field class="w-full">
                                     <mat-label>Starting Tactic</mat-label>
-                                    <mtx-select [items]="tactics" [(ngModel)]="fakeVar" formControlName="tactic1" required>
+                                    <mtx-select [items]="tactics | keyvalue" bindLabel="value" bindValue="key" [(ngModel)]="fakeVar" formControlName="tactic1" required>
                                     </mtx-select>
                                 </mat-form-field>
                                 <mat-form-field class="w-full">
                                     <mat-label>Second Tactic</mat-label>
-                                    <mtx-select [items]="tactics" [(ngModel)]="fakeVar" formControlName="tactic2" required>
+                                    <mtx-select [items]="tactics | keyvalue" bindLabel="value" bindValue="key" [(ngModel)]="fakeVar" formControlName="tactic2" required>
                                     </mtx-select>
                                 </mat-form-field>
                                 <mat-form-field>
@@ -43,7 +43,7 @@
                                 </mat-form-field>
                             </section>
                             <section fxFlex="100%" fxFlex.gt-sm="25%" class="matero-col">
-                                <h3>Unit Stats 
+                                <h3>Unit Stats
                                     <button mat-icon-button>
                                         <mat-icon color="accent">file_copy</mat-icon>
                                     </button>
@@ -70,8 +70,15 @@
                                             <mat-label>NPW Skill</mat-label>
                                             <input matInput formControlName="npwSkill" type="number" min="0" max="5" step="1" [(ngModel)]="fakeVar" required>
                                         </mat-form-field>
+                                        <mat-form-field>
+                                            <mat-label>Lightsaber</mat-label>
+                                            <input matInput formControlName="lightSkill" type="number" min="0" max="5" step="1" [(ngModel)]="fakeVar" required>
+                                        </mat-form-field>
                                     </div>
-                                    <div fxFlex="50%" class="matero-col">                                
+                                    <div fxFlex="50%" class="matero-col">
+                                        <mat-slide-toggle class="form-manual-spacing" formControlName="force" [(ngModel)]="fakeVar">
+                                            Force
+                                        </mat-slide-toggle>
                                         <mat-slide-toggle class="form-manual-spacing" formControlName="isDroid" [(ngModel)]="blueIsDroid">
                                             Is Droid
                                         </mat-slide-toggle>
@@ -107,19 +114,19 @@
                                 </div>
                             </section>
                             <section fxFlex="100%" fxFlex.gt-sm="25%" class="matero-col">
-                                <h3>Primary Weapon 
+                                <h3>Primary Weapon
                                     <button mat-icon-button>
                                         <mat-icon color="accent">file_copy</mat-icon>
                                     </button>
                                 </h3>
                                 <mat-form-field class="w-full">
                                     <mat-label>Weapon Class</mat-label>
-                                    <mtx-select [items]="weaponClasses" [(ngModel)]="fakeVar" formControlName="primaryClass" required>
+                                    <mtx-select [items]="weaponClasses | keyvalue" bindLabel="value" bindValue="key" [(ngModel)]="fakeVar" formControlName="primaryClass" required>
                                     </mtx-select>
                                 </mat-form-field>
                                 <mat-form-field class="w-full">
                                     <mat-label>Damage Type</mat-label>
-                                    <mtx-select [items]="damageTypes" [(ngModel)]="fakeVar" formControlName="primaryType" required>
+                                    <mtx-select [items]="damageTypes | keyvalue" bindLabel="value" bindValue="key" [(ngModel)]="fakeVar" formControlName="primaryType" required>
                                     </mtx-select>
                                 </mat-form-field>
                                 <mat-slide-toggle class="form-manual-spacing" formControlName="primaryDualWield" [(ngModel)]="fakeVar">
@@ -157,19 +164,19 @@
                                 </div>
                             </section>
                             <section fxFlex="100%" fxFlex.gt-sm="25%" class="matero-col">
-                                <h3>Secondary Weapon 
+                                <h3>Secondary Weapon
                                     <button mat-icon-button>
                                         <mat-icon color="accent">file_copy</mat-icon>
                                     </button>
                                 </h3>
                                 <mat-form-field class="w-full">
                                     <mat-label>Weapon Class</mat-label>
-                                    <mtx-select [items]="weaponClasses" [(ngModel)]="fakeVar" formControlName="secondaryClass" required>
+                                    <mtx-select [items]="weaponClasses | keyvalue" bindLabel="value" bindValue="key" [(ngModel)]="fakeVar" formControlName="secondaryClass" required>
                                     </mtx-select>
                                 </mat-form-field>
                                 <mat-form-field class="w-full">
                                     <mat-label>Damage Type</mat-label>
-                                    <mtx-select [items]="damageTypes" [(ngModel)]="fakeVar" formControlName="secondaryType" required>
+                                    <mtx-select [items]="damageTypes | keyvalue" bindLabel="value" bindValue="key" [(ngModel)]="fakeVar" formControlName="secondaryType" required>
                                     </mtx-select>
                                 </mat-form-field>
                                 <mat-slide-toggle class="form-manual-spacing" formControlName="secondaryDualWield" [(ngModel)]="fakeVar">
@@ -217,7 +224,7 @@
                     <form [formGroup]="redForm" class="form-field-full">
                         <div fxLayout="row wrap" class="matero-row">
                             <section fxFlex="100%" fxFlex.gt-sm="25%" class="matero-col">
-                                <h3>Squad Settings 
+                                <h3>Squad Settings
                                     <button mat-icon-button>
                                         <mat-icon color="accent">file_copy</mat-icon>
                                     </button>
@@ -236,12 +243,12 @@
                                 </mat-form-field>
                                 <mat-form-field class="w-full">
                                     <mat-label>Starting Tactic</mat-label>
-                                    <mtx-select [items]="tactics" [(ngModel)]="fakeVar" formControlName="tactic1" required>
+                                    <mtx-select [items]="tactics | keyvalue" bindLabel="value" bindValue="key" [(ngModel)]="fakeVar" formControlName="tactic1" required>
                                     </mtx-select>
                                 </mat-form-field>
                                 <mat-form-field class="w-full">
                                     <mat-label>Second Tactic</mat-label>
-                                    <mtx-select [items]="tactics" [(ngModel)]="fakeVar" formControlName="tactic2" required>
+                                    <mtx-select [items]="tactics | keyvalue" bindLabel="value" bindValue="key" [(ngModel)]="fakeVar" formControlName="tactic2" required>
                                     </mtx-select>
                                 </mat-form-field>
                                 <mat-form-field>
@@ -250,7 +257,7 @@
                                 </mat-form-field>
                             </section>
                             <section fxFlex="100%" fxFlex.gt-sm="25%" class="matero-col">
-                                <h3>Unit Stats 
+                                <h3>Unit Stats
                                     <button mat-icon-button>
                                         <mat-icon color="accent">file_copy</mat-icon>
                                     </button>
@@ -277,8 +284,15 @@
                                             <mat-label>NPW Skill</mat-label>
                                             <input matInput formControlName="npwSkill" type="number" min="0" max="5" step="1" [(ngModel)]="fakeVar" required>
                                         </mat-form-field>
+                                        <mat-form-field>
+                                            <mat-label>Lightsaber</mat-label>
+                                            <input matInput formControlName="lightSkill" type="number" min="0" max="5" step="1" [(ngModel)]="fakeVar" required>
+                                        </mat-form-field>
                                     </div>
-                                    <div fxFlex="50%" class="matero-col">                                
+                                    <div fxFlex="50%" class="matero-col">
+                                        <mat-slide-toggle class="form-manual-spacing" formControlName="force" [(ngModel)]="fakeVar">
+                                            Force
+                                        </mat-slide-toggle>
                                         <mat-slide-toggle class="form-manual-spacing" formControlName="isDroid" [(ngModel)]="redIsDroid">
                                             Is Droid
                                         </mat-slide-toggle>
@@ -314,19 +328,19 @@
                                 </div>
                             </section>
                             <section fxFlex="100%" fxFlex.gt-sm="25%" class="matero-col">
-                                <h3>Primary Weapon 
+                                <h3>Primary Weapon
                                     <button mat-icon-button>
                                         <mat-icon color="accent">file_copy</mat-icon>
                                     </button>
                                 </h3>
                                 <mat-form-field class="w-full">
                                     <mat-label>Weapon Class</mat-label>
-                                    <mtx-select [items]="weaponClasses" [(ngModel)]="fakeVar" formControlName="primaryClass" required>
+                                    <mtx-select [items]="weaponClasses | keyvalue" bindLabel="value" bindValue="key" [(ngModel)]="fakeVar" formControlName="primaryClass" required>
                                     </mtx-select>
                                 </mat-form-field>
                                 <mat-form-field class="w-full">
                                     <mat-label>Damage Type</mat-label>
-                                    <mtx-select [items]="damageTypes" [(ngModel)]="fakeVar" formControlName="primaryType" required>
+                                    <mtx-select [items]="damageTypes | keyvalue" bindLabel="value" bindValue="key" [(ngModel)]="fakeVar" formControlName="primaryType" required>
                                     </mtx-select>
                                 </mat-form-field>
                                 <mat-slide-toggle class="form-manual-spacing" formControlName="primaryDualWield" [(ngModel)]="fakeVar">
@@ -364,19 +378,19 @@
                                 </div>
                             </section>
                             <section fxFlex="100%" fxFlex.gt-sm="25%" class="matero-col">
-                                <h3>Secondary Weapon 
+                                <h3>Secondary Weapon
                                     <button mat-icon-button>
                                         <mat-icon color="accent">file_copy</mat-icon>
                                     </button>
                                 </h3>
                                 <mat-form-field class="w-full">
                                     <mat-label>Weapon Class</mat-label>
-                                    <mtx-select [items]="weaponClasses" [(ngModel)]="fakeVar" formControlName="secondaryClass" required>
+                                    <mtx-select [items]="weaponClasses | keyvalue" bindLabel="value" bindValue="key" [(ngModel)]="fakeVar" formControlName="secondaryClass" required>
                                     </mtx-select>
                                 </mat-form-field>
                                 <mat-form-field class="w-full">
                                     <mat-label>Damage Type</mat-label>
-                                    <mtx-select [items]="damageTypes" [(ngModel)]="fakeVar" formControlName="secondaryType" required>
+                                    <mtx-select [items]="damageTypes | keyvalue" bindLabel="value" bindValue="key" [(ngModel)]="fakeVar" formControlName="secondaryType" required>
                                     </mtx-select>
                                 </mat-form-field>
                                 <mat-slide-toggle class="form-manual-spacing" formControlName="secondaryDualWield" [(ngModel)]="fakeVar">
@@ -502,7 +516,7 @@
                                 </tr>
                             </table>
                         </section>
-                    </div>                                            
+                    </div>
                     <div class="anchor"><mat-divider></mat-divider></div>
                     <section fxLayout="row wrap" class="matero-row p-t-16">
                         <table fxFlex="50%" class="matero-col spaced-out">
@@ -514,7 +528,7 @@
                                 <td>Ties</td><td>0</td>
                             </tr>
                         </table>
-                        <div fxFlex="50%" class="matero-col flex-center">                            
+                        <div fxFlex="50%" class="matero-col flex-center">
                             <button mat-raised-button color="primary" [disabled]="!blueForm.valid || !redForm.valid">Simulate</button>
                         </div>
                     </section>
