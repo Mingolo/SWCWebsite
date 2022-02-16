@@ -1,6 +1,18 @@
 import { DamageType, lsWeaponSkill, WeaponClass } from "./ground-combat-constants";
 
 export class GroundCombat {
+    public static getDodgeThreshold() {
+
+    }
+
+    public static getRangeModifier(optimumRange: number, currentRange: number, weaponDropOff: number) {
+      const deltaRange = Math.abs(optimumRange - currentRange);
+      let rangeMod = (1 - (0.95 / (1 + Math.E**(-2 * (deltaRange - weaponDropOff))))) - (0.003 * deltaRange);
+      rangeMod = rangeMod > 0 ? rangeMod : 0;
+
+      return rangeMod;
+    }
+
     public static getAttackSkill(
       dex: number, pwSkill: number, npwSkill: number,
       hwSkill: number, lightSkill: number, force: boolean,
