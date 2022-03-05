@@ -13,7 +13,8 @@
     "lint:scss": "stylelint \"src/**/*.scss\" --fix",
     "hmr": "ng serve --hmr --disable-host-check",
     "postinstall": "ngcc --properties es2015 browser module main --first-only --create-ivy-entry-points",
-    "test:simulation": "ng test --include src/app/simulation"
+    "test:simulation": "ng test --include src/app/simulation",
+    "test:groundCombatUtils": "ng test --include src\\app\\shared\\utils\\ground-combat.util.spec.ts"
   },
   "private": true,
   "dependencies": {
@@ -34,7 +35,7 @@
     "@ngx-formly/core": "^5.10.23",
     "@ngx-formly/material": "^5.10.23",
     "@ngx-translate/core": "^13.0.0",
-    "@ngx-translate/http-loader": "^6.0.0",    
+    "@ngx-translate/http-loader": "^6.0.0",
     "angular-in-memory-web-api": "^0.11.0",
     "apexcharts": "^3.32.1",
     "moment": "^2.29.1",

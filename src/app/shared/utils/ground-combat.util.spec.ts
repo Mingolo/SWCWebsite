@@ -3,6 +3,115 @@ import { DamageType, WeaponClass } from './ground-combat-constants';
 import { GroundCombat } from './ground-combat.util';
 
 
+describe('modDamageByArmor()', () => {
+
+  it('should return error if all inputs are 0', () => {
+    expect(() => GroundCombat.modDamageByArmor(0, 0, 0)).toThrow(new Error("Invalid value. Weapon firepower cannot be 0."));
+  });
+
+  it('should return error if attackFirepower is 0', () => {
+    expect(() => GroundCombat.modDamageByArmor(15, 0, 5)).toThrow(new Error("Invalid value. Weapon firepower cannot be 0."));
+  });
+
+  it('should return 15 if damage is 15, firepower is 10, and armor is 0', () => {
+    expect(GroundCombat.modDamageByArmor(15, 10, 0)).toEqual(15);
+  });
+
+  it('should return ~6.52 if damage is 15, firepower is 10, and armor is 13', () => {
+    expect(GroundCombat.modDamageByArmor(15, 10, 13)).toBeCloseTo(6.52, 1);
+  });
+
+  it('should return ~13.63 if damage is 15, firepower is 10, and armor is 1', () => {
+    expect(GroundCombat.modDamageByArmor(15, 10, 1)).toBeCloseTo(13.63, 1);
+  });
+
+  it('should return ~3.75 if damage is 15, firepower is 10, and armor is 30', () => {
+    expect(GroundCombat.modDamageByArmor(15, 10, 30)).toBeCloseTo(3.75, 1);
+  });
+
+  it('should return ~1.07 if damage is 15, firepower is 1, and armor is 13', () => {
+    expect(GroundCombat.modDamageByArmor(15, 1, 13)).toBeCloseTo(1.07, 1);
+  });
+
+  it('should return 0 if damage is -15', () => {
+    expect(GroundCombat.modDamageByArmor(-15, 1, 13)).toEqual(0);;
+  });
+});
+
+describe('getAvgBaseDamage()', () => {
+
+  it('should return 0 if all inputs are 0', () => {
+    expect(GroundCombat.getAvgBaseDamage(0, 0, 0, 0)).toEqual(0);
+  });
+
+  it('should return 0 if weaponSkill is 0, damageSkillMod is 1, minDamage is 0, maxDamage is 0', () => {
+    expect(GroundCombat.getAvgBaseDamage(0, 1, 0, 0)).toEqual(0);
+  });
+
+  it('should return 0 if  weaponSkill is 0, damageSkillMod is 0, minDamage is 1, maxDamage is 1', () => {
+    expect(GroundCombat.getAvgBaseDamage(0, 0, 1, 1)).toEqual(0);
+  });
+
+  it('should return ~4.5 if  weaponSkill is 0, damageSkillMod is 1, minDamage is 3, maxDamage is 6', () => {
+    expect(GroundCombat.getAvgBaseDamage(0, 1, 3, 6)).toBeCloseTo(4.5, 2);
+  });
+
+  it('should return ~4.8 if  weaponSkill is 1, damageSkillMod is 1.1, minDamage is 3, maxDamage is 6', () => {
+    expect(GroundCombat.getAvgBaseDamage(1, 1.1, 3, 6)).toBeCloseTo(4.8, 2);
+  });
+
+  it('should return ~5.139 if  weaponSkill is 2, damageSkillMod is 1.2, minDamage is 3, maxDamage is 6', () => {
+    expect(GroundCombat.getAvgBaseDamage(2, 1.2, 3, 6)).toBeCloseTo(5.139, 2);
+  });
+
+  it('should return ~5.3495 if  weaponSkill is 3, damageSkillMod is 1.3, minDamage is 3, maxDamage is 6', () => {
+    expect(GroundCombat.getAvgBaseDamage(3, 1.3, 3, 6)).toBeCloseTo(5.3495, 2);
+  });
+
+  it('should return ~5.5565 if  weaponSkill is 4, damageSkillMod is 1.4, minDamage is 3, maxDamage is 6', () => {
+    expect(GroundCombat.getAvgBaseDamage(4, 1.4, 3, 6)).toBeCloseTo(5.5565, 2);
+  });
+
+  it('should return ~5.76 if  weaponSkill is 5, damageSkillMod is 1.5, minDamage is 3, maxDamage is 6', () => {
+    expect(GroundCombat.getAvgBaseDamage(5, 1.5, 3, 6)).toBeCloseTo(5.76, 2);
+  });
+
+  it('should return ~1.6785 if  weaponSkill is 2, damageSkillMod is 1.2, minDamage is 3, maxDamage is 6', () => {
+    expect(GroundCombat.getAvgBaseDamage(2, 1.2, 0, 3)).toBeCloseTo(1.6785, 2);
+  });
+
+  it('should return 0 if  weaponSkill is 5, damageSkillMod is -1.5, minDamage is 3, maxDamage is 6', () => {
+    expect(GroundCombat.getAvgBaseDamage(5, -1.5, 3, 6)).toEqual(0);
+  });
+});
+
+describe('getDamageSkillMod()', () => {
+
+  it('should return 1 if weaponSkill is 0', () => {
+    expect(GroundCombat.getDamageSkillMod(0)).toEqual(1);
+  });
+
+  it('should return 1.1 if weaponSkill is 0', () => {
+    expect(GroundCombat.getDamageSkillMod(1)).toEqual(1.1);
+  });
+
+  it('should return 1.2 if weaponSkill is 0', () => {
+    expect(GroundCombat.getDamageSkillMod(2)).toEqual(1.2);
+  });
+
+  it('should return 1.3 if weaponSkill is 0', () => {
+    expect(GroundCombat.getDamageSkillMod(3)).toEqual(1.3);
+  });
+
+  it('should return 1.4 if weaponSkill is 0', () => {
+    expect(GroundCombat.getDamageSkillMod(4)).toEqual(1.4);
+  });
+
+  it('should return 1.5 if weaponSkill is 0', () => {
+    expect(GroundCombat.getDamageSkillMod(5)).toEqual(1.5);
+  });
+});
+
 describe('getDodgeThreshold()', () => {
 
   it('should return 58 if both dodge and attackSkill are 0', () => {
@@ -12,7 +121,6 @@ describe('getDodgeThreshold()', () => {
   it('should return 83 if Dodge 2, attackSkill 4', () => {
     expect(GroundCombat.getDodgeThreshold(2, 4)).toEqual(83);
   });
-
 
   it('should return 83 if Dodge 2, attackSkill 4.5', () => {
     expect(GroundCombat.getDodgeThreshold(2, 4.5)).toEqual(83);
@@ -62,35 +170,43 @@ describe('getDodgeThreshold()', () => {
 describe('getRangeModifier()', () => {
 
   it('should return 1 if all inputs are 0', () => {
-    expect(GroundCombat.getRangeModifier(0, 0, 0)).toEqual(1);
+    expect(GroundCombat.getRangeModifier(0, 0, 0, WeaponClass.Projectile)).toEqual(1);
   });
 
   it('should return 1 if optimumRange and currentRange are the same', () => {
-    expect(GroundCombat.getRangeModifier(6, 6, 4.5)).toEqual(1);
+    expect(GroundCombat.getRangeModifier(6, 6, 4.5, WeaponClass.Projectile)).toEqual(1);
   });
 
   it('should return ~0.1602 if optimumRange is 1, currentRange is 0, and weaponDropOff is 0', () => {
-    expect(GroundCombat.getRangeModifier(1, 0, 0)).toBeCloseTo(0.1602, 3);
+    expect(GroundCombat.getRangeModifier(1, 0, 0, WeaponClass.Projectile)).toBeCloseTo(0.1602, 3);
   });
 
   it('should return ~0.7325 if optimumRange is 6, currentRange is 2, and weaponDropOff is 4.5', () => {
-    expect(GroundCombat.getRangeModifier(6, 2, 4.5)).toBeCloseTo(0.7325, 3);
+    expect(GroundCombat.getRangeModifier(6, 2, 4.5, WeaponClass.Projectile)).toBeCloseTo(0.7325, 3);
   });
 
   it('should return ~0.9459 if optimumRange is 6, currentRange is 3, and weaponDropOff is 4.5', () => {
-    expect(GroundCombat.getRangeModifier(6, 3, 4.5)).toBeCloseTo(0.9459, 3);
+    expect(GroundCombat.getRangeModifier(6, 3, 4.5, WeaponClass.Projectile)).toBeCloseTo(0.9459, 3);
   });
 
   it('should return ~0.2904 if optimumRange is 6, currentRange is 1, and weaponDropOff is 4.5', () => {
-    expect(GroundCombat.getRangeModifier(6, 1, 4.5)).toBeCloseTo(0.2904, 3);
+    expect(GroundCombat.getRangeModifier(6, 1, 4.5, WeaponClass.Projectile)).toBeCloseTo(0.2904, 3);
   });
 
   it('should return ~0.0353 if optimumRange is 7, currentRange is 0, and weaponDropOff is 4.5', () => {
-    expect(GroundCombat.getRangeModifier(7, 0, 4.5)).toBeCloseTo(0.0353, 3);
+    expect(GroundCombat.getRangeModifier(7, 0, 4.5, WeaponClass.Projectile)).toBeCloseTo(0.0353, 3);
   });
 
   it('should return 0 if optimumRange is 21, currentRange is 0, and weaponDropOff is 4.5', () => {
-    expect(GroundCombat.getRangeModifier(21, 0, 4.5)).toEqual(0);
+    expect(GroundCombat.getRangeModifier(21, 0, 4.5, WeaponClass.Projectile)).toEqual(0);
+  });
+
+  it('should return 0 if currentRange > 0 and attacking with NPW weapon', () => {
+    expect(GroundCombat.getRangeModifier(6, 3, 4.5, WeaponClass.NonProjectile)).toEqual(0);
+  });
+
+  it('should return 1 if attacking with NPW and currentRange is 0', () => {
+    expect(GroundCombat.getRangeModifier(0, 0, 4.5, WeaponClass.NonProjectile)).toEqual(1);
   });
 });
 

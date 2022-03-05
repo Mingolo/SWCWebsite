@@ -129,9 +129,6 @@
                                     <mtx-select [items]="damageTypes | keyvalue" bindLabel="value" bindValue="key" [(ngModel)]="fakeVar" formControlName="primaryType" required>
                                     </mtx-select>
                                 </mat-form-field>
-                                <mat-slide-toggle class="form-manual-spacing" formControlName="primaryDualWield" [(ngModel)]="fakeVar">
-                                    Dual Wieldable
-                                </mat-slide-toggle>
                                 <div fxLayout="row wrap" class="matero-row">
                                     <div fxFlex="50%" class="matero-col">
                                         <mat-form-field>
@@ -180,7 +177,7 @@
                                     </mtx-select>
                                 </mat-form-field>
                                 <mat-slide-toggle class="form-manual-spacing" formControlName="secondaryDualWield" [(ngModel)]="fakeVar">
-                                    Dual Wieldable
+                                  Dual Wielding - Offhand
                                 </mat-slide-toggle>
                                 <div fxLayout="row wrap" class="matero-row">
                                     <div fxFlex="50%" class="matero-col">
@@ -343,9 +340,6 @@
                                     <mtx-select [items]="damageTypes | keyvalue" bindLabel="value" bindValue="key" [(ngModel)]="fakeVar" formControlName="primaryType" required>
                                     </mtx-select>
                                 </mat-form-field>
-                                <mat-slide-toggle class="form-manual-spacing" formControlName="primaryDualWield" [(ngModel)]="fakeVar">
-                                    Dual Wieldable
-                                </mat-slide-toggle>
                                 <div fxLayout="row wrap" class="matero-row">
                                     <div fxFlex="50%" class="matero-col">
                                         <mat-form-field>
@@ -394,7 +388,7 @@
                                     </mtx-select>
                                 </mat-form-field>
                                 <mat-slide-toggle class="form-manual-spacing" formControlName="secondaryDualWield" [(ngModel)]="fakeVar">
-                                    Dual Wieldable
+                                    Dual Wielding - Offhand
                                 </mat-slide-toggle>
                                 <div fxLayout="row wrap" class="matero-row">
                                     <div fxFlex="50%" class="matero-col">
@@ -439,7 +433,7 @@
             <div fxFlex="100%" fxFlex.gt-sm="50%" class="matero-col h-full">
                 <mat-card class="h-full">
                     <section fxLayout="column" class="h-full">
-                        <mat-card-subtitle fxFlex="0 1 auto">Average Damage Based on Range</mat-card-subtitle>
+                        <mat-card-subtitle fxFlex="0 1 auto">Average Base Damage vs Range</mat-card-subtitle>
                         <div fxFlex="1 1 auto">
                             <div id="damageRangeChart" class="h-full"></div>
                         </div>

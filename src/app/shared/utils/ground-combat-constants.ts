@@ -54,7 +54,6 @@ export const statsForm = {
   armor: ['', [Validators.required]],
   primaryClass: ['', [Validators.required]],
   primaryType: ['', [Validators.required]],
-  primaryDualWield: ['', [Validators.required]],
   primaryFirepower: ['', [Validators.required]],
   primaryMinDamage: ['', [Validators.required]],
   primaryMaxDamage: ['', [Validators.required]],

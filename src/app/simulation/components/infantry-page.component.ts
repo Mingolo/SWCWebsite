@@ -85,7 +85,7 @@ export class InfantryPageComponent implements OnInit {
     },
     yaxis: {
       title: {
-        text: "Avgerage Damage per Hit",
+        text: "Average Base Damage per Hit",
         style: {
           color: this.contentColor,
           fontWeight: "normal"
