@@ -9,9 +9,9 @@ export enum DamageType {
     Poison = 'Poison',
     Nonlethal = 'Nonlethal',
     PhysicalH = 'Physical (H)',
-    EnergyH = 'Energy (H) ',
+    EnergyH = 'Energy (H)',
     ExplosiveH = 'Explosive (H)',
-    Ionic = 'Ionic (H)',
+    IonicH = 'Ionic (H)',
     ConcussiveH = 'Concussive (H)',
     TurbolaserH = 'Turbolaser (H)',
     EnergyO = 'Energy (O)',
@@ -27,6 +27,13 @@ export enum WeaponClass {
   Projectile = 'Projectile',
   NonProjectile = 'Non-Projectile',
   HeavyProjectile = 'Heavy Projectile'
+}
+
+export enum UnitType {
+  Soft = 'Soft',
+  Mechanical = 'Mechanical',
+  Facility = 'Facility',
+  Vehicle = 'Vehicle'
 }
 
 export const chartXAxis = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21"];
@@ -88,3 +95,36 @@ export const dodgeThreshold = [
   [8,17,28,42,58,72,83,92],
   [3,8,17,28,42,58,72,83]
 ];
+
+export const damageTypeMods: { [key in DamageType]: { [key in UnitType]: number}} = {
+  "Physical (P)": {
+      "Soft": 1.00, "Mechanical": 1.00, "Facility": 0.10, "Vehicle": 0.10},
+  "Energy (P)": {
+      "Soft": 1.00, "Mechanical": 1.00, "Facility": 0.10, "Vehicle": 0.10},
+  "Explosive (P)" : {
+      "Soft": 0.10, "Mechanical": 1.00, "Facility": 1.00, "Vehicle": 1.00},
+  "Ionic (P)": {
+      "Soft": 0.00, "Mechanical": 1.00, "Facility": 0.10, "Vehicle": 0.10},
+  "Lightsaber" : {
+      "Soft": 1.00, "Mechanical": 1.00, "Facility": 1.00, "Vehicle": 1.00},
+  "Poison": {
+      "Soft": 1.00, "Mechanical": 1.00, "Facility": 0.10, "Vehicle": 0.10},
+  "Nonlethal": {
+      "Soft": 1.00, "Mechanical": 1.00, "Facility": 0.10, "Vehicle": 0.10},
+  "Physical (H)": {
+      "Soft": 1.00, "Mechanical": 1.00, "Facility": 1.00, "Vehicle": 1.00},
+  "Energy (H)": {
+      "Soft": 0.30, "Mechanical": 0.30, "Facility": 0.50, "Vehicle": 1.00},
+  "Explosive (H)": {
+      "Soft": 0.10, "Mechanical": 0.10, "Facility": 1.00, "Vehicle": 0.50},
+  "Ionic (H)": {
+      "Soft": 0.00, "Mechanical": 0.10, "Facility": 1.00, "Vehicle": 1.00},
+  "Concussive (H)": {
+      "Soft": 0.20, "Mechanical": 0.10, "Facility": 0.30, "Vehicle": 1.00},
+  "Turbolaser (H)": {
+      "Soft": 0.10, "Mechanical": 0.10, "Facility": 1.00, "Vehicle": 0.50},
+  "Energy (O)": {
+      "Soft": 1.00, "Mechanical": 1.00, "Facility": 1.00, "Vehicle": 1.00},
+  "Ionic (O)": {
+      "Soft": 1.00, "Mechanical": 1.00, "Facility": 1.00, "Vehicle": 1.00 }
+}

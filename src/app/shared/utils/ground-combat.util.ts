@@ -1,6 +1,11 @@
-import { DamageType, dodgeThreshold, lsWeaponSkill, WeaponClass } from "./ground-combat-constants";
+import { DamageType, damageTypeMods, dodgeThreshold, lsWeaponSkill, UnitType, WeaponClass } from "./ground-combat-constants";
 
 export class GroundCombat {
+
+  public static modDamageByType (damageIn: number, damageType: DamageType, unitType: UnitType) : number {
+    damageIn = damageIn > 0 ? damageIn : 0;
+    return damageIn * damageTypeMods[damageType][unitType];
+  }
 
   public static modDamageByArmor(damageIn: number, attackFirepower: number, defendArmor: number) : number {
 

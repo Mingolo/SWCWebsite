@@ -1,7 +1,58 @@
 import { TestBed } from '@angular/core/testing';
-import { DamageType, WeaponClass } from './ground-combat-constants';
+import { DamageType, UnitType, WeaponClass } from './ground-combat-constants';
 import { GroundCombat } from './ground-combat.util';
 
+
+describe('modDamageByType()', () => {
+
+  it('should return 0 if damageIn is 0', () => {
+    expect(GroundCombat.modDamageByType(0, DamageType.EnergyP, UnitType.Soft)).toEqual(0);
+  });
+
+  it('should return 1 if damageIn is 1, damageType is Energy (P), and unitType is Soft', () => {
+    expect(GroundCombat.modDamageByType(1, DamageType.EnergyP, UnitType.Soft)).toEqual(1);
+  });
+
+  it('should return 100 if damageIn is 100, damageType is Energy (P), and unitType is Soft', () => {
+    expect(GroundCombat.modDamageByType(100, DamageType.EnergyP, UnitType.Soft)).toEqual(100);
+  });
+
+  it('should return 10 if damageIn is 100, damageType is Explosive (P), and unitType is Soft', () => {
+    expect(GroundCombat.modDamageByType(100, DamageType.ExplosiveP, UnitType.Soft)).toEqual(10);
+  });
+
+  it('should return 100 if damageIn is 100, damageType is Explosive (P), and unitType is Mechanical', () => {
+    expect(GroundCombat.modDamageByType(100, DamageType.ExplosiveP, UnitType.Mechanical)).toEqual(100);
+  });
+
+  it('should return 0 if damageIn is 100, damageType is Ionic (P), and unitType is Soft', () => {
+    expect(GroundCombat.modDamageByType(100, DamageType.IonicP, UnitType.Soft)).toEqual(0);
+  });
+
+  it('should return 100 if damageIn is 100, damageType is Ionic (P), and unitType is Mechanical', () => {
+    expect(GroundCombat.modDamageByType(100, DamageType.IonicP, UnitType.Mechanical)).toEqual(100);
+  });
+
+  it('should return 100 if damageIn is 100, damageType is Lightsaber, and unitType is Mechanical', () => {
+    expect(GroundCombat.modDamageByType(100, DamageType.Lightsaber, UnitType.Mechanical)).toEqual(100);
+  });
+
+  it('should return 30 if damageIn is 100, damageType is Energy (H), and unitType is Soft', () => {
+    expect(GroundCombat.modDamageByType(100, DamageType.EnergyH, UnitType.Soft)).toEqual(30);
+  });
+
+  it('should return 20 if damageIn is 100, damageType is Concussive (H), and unitType is Soft', () => {
+    expect(GroundCombat.modDamageByType(100, DamageType.ConcussiveH, UnitType.Soft)).toEqual(20);
+  });
+
+  it('should return 100 if damageIn is 100, damageType is Energy (O), and unitType is Soft', () => {
+    expect(GroundCombat.modDamageByType(100, DamageType.EnergyO, UnitType.Soft)).toEqual(100);
+  });
+
+  it('should return 0 if damageIn is negative', () => {
+    expect(GroundCombat.modDamageByType(-100, DamageType.EnergyO, UnitType.Soft)).toEqual(0);
+  });
+});
 
 describe('modDamageByArmor()', () => {
 
