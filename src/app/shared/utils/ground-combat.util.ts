@@ -2,9 +2,44 @@ import { DamageType, damageTypeMods, dodgeThreshold, lsWeaponSkill, UnitType, We
 
 export class GroundCombat {
 
-  public static modDamageByType (damageIn: number, damageType: DamageType, unitType: UnitType) : number {
+  public static rollDamage (
+    weaponSkill: number, minDamage: number, maxDamage: number,
+    attackFirepower: number, defendArmor: number, damageType: DamageType,
+    defendUnitType: UnitType, dualWielded: boolean) {
+
+      // roll base damage and modify by weapon skill
+      let damage = this.rollRandomMinMax(minDamage, maxDamage);
+      if (this.rollPercentage() < weaponSkill) {   // critital hit chance
+        damage = maxDamage * 1.5;
+      } else {
+        damage = damage * this.getDamageSkillMod(weaponSkill);
+        damage = damage < maxDamage ? damage : maxDamage;
+      }
+
+      // dual wield penalty
+      if (dualWielded && defendUnitType != UnitType.Mechanical)
+        damage = damage/2;
+
+      // modify by armor
+      damage = this.modDamageByArmor(damage, attackFirepower, defendArmor);
+
+      // modify by damage and unit types
+      damage = this.modDamageByType (damage, damageType, defendUnitType);
+
+      return damage;
+  }
+
+  public static rollPercentage(): number {
+    return Math.floor(Math.random() * 100) + 1;
+  }
+
+  public static rollRandomMinMax(min: number, max: number): number {
+    return Math.floor(Math.random() * (max - min + 1) ) + min;
+  }
+
+  public static modDamageByType (damageIn: number, damageType: DamageType, defendUnitType: UnitType) : number {
     damageIn = damageIn > 0 ? damageIn : 0;
-    return damageIn * damageTypeMods[damageType][unitType];
+    return damageIn * damageTypeMods[damageType][defendUnitType];
   }
 
   public static modDamageByArmor(damageIn: number, attackFirepower: number, defendArmor: number) : number {
@@ -44,7 +79,7 @@ export class GroundCombat {
 
   public static rollHit(hitChance: number) : boolean {
     // roll random number between 1 and 100;
-    const hitRoll = Math.floor(Math.random() * 100) + 1;
+    const hitRoll = this.rollPercentage();
 
     if (hitRoll < hitChance)
       return true;
@@ -57,10 +92,10 @@ export class GroundCombat {
     weaponDropOff: number, dex: number, pwSkill: number,
     npwSkill: number, hwSkill: number, lightSkill: number,
     attackForce: boolean, weaponClass: WeaponClass, damageType: DamageType,
-    dualWielded: boolean) : number {
+    dualWielded: boolean, defendUnitType: UnitType) : number {
 
       let dualWieldMod = 1;
-      if (dualWielded)
+      if (dualWielded && defendUnitType != UnitType.Mechanical)
         dualWieldMod = 0.5;
       const weaponSkill = this.getWeaponSkill(pwSkill, npwSkill, hwSkill, lightSkill, attackForce, weaponClass, damageType);
       const attackSkill = this.getAttackSkill(dex, weaponSkill);
