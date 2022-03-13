@@ -53,7 +53,7 @@ export const statsForm = {
   lightSkill: ['', [Validators.required]],
   force: ['', [Validators.required]],
   isDroid: ['', [Validators.required]],
-  hull: ['', [Validators.required]],
+  hp: ['', [Validators.required]],
   deflectors: ['', [Validators.required]],
   ionic: ['', [Validators.required]],
   level: ['', [Validators.required]],

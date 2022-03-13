@@ -1,7 +1,321 @@
 import { TestBed } from '@angular/core/testing';
+import { Combatant } from 'app/simulation/models/combatant.model';
+import { MockService } from 'ng-mocks';
 import { DamageType, UnitType, WeaponClass } from './ground-combat-constants';
 import { GroundCombat } from './ground-combat.util';
 
+
+
+describe('regenHP()', () => {
+  let unit: Combatant;
+
+  beforeEach(() => {
+    unit = MockService(Combatant);
+  });
+
+  it('the combatant should end with 0 HP if maxHp is 0', () => {
+    unit.currHp = 0;
+    unit.maxHp = 0;
+    expect(GroundCombat.regenHP (unit).currHp).toEqual(0);
+  });
+
+  it('the combatant should end with 1 HP if current HP is 1 and maxHp is 1', () => {
+    unit.currHp = 1;
+    unit.maxHp = 1;
+    expect(GroundCombat.regenHP (unit).currHp).toEqual(1);
+  });
+
+  it('the combatant should end with 60 HP if current HP is 50 and maxHp is 100', () => {
+    unit.currHp = 50;
+    unit.maxHp = 100;
+    expect(GroundCombat.regenHP (unit).currHp).toEqual(60);
+  });
+
+  it('the combatant should end with 350 HP if current HP is 300 and maxHp is 500', () => {
+    unit.currHp = 300;
+    unit.maxHp = 500;
+    expect(GroundCombat.regenHP (unit).currHp).toEqual(350);
+  });
+
+  it('the combatant should end with 355.5 HP if current HP is 300 and maxHp is 555', () => {
+    unit.currHp = 300;
+    unit.maxHp = 555;
+    expect(GroundCombat.regenHP (unit).currHp).toEqual(355.5);
+  });
+
+  it('the combatant should end with 100 HP if current HP is 90 and maxHp is 100', () => {
+    unit.currHp = 90;
+    unit.maxHp = 100;
+    expect(GroundCombat.regenHP (unit).currHp).toEqual(100);
+  });
+
+  it('the combatant should end with 100 HP if current HP is 98 and maxHp is 100', () => {
+    unit.currHp = 98;
+    unit.maxHp = 100;
+    expect(GroundCombat.regenHP (unit).currHp).toEqual(100);
+  });
+
+  it('the combatant should end with 100 HP if current HP is 100 and maxHp is 100', () => {
+    unit.currHp = 100;
+    unit.maxHp = 100;
+    expect(GroundCombat.regenHP (unit).currHp).toEqual(100);
+  });
+
+  it('the combatant should return an error if maxHp is less than currHp', () => {
+    unit.currHp = 150;
+    unit.maxHp = 100;
+    expect(() => GroundCombat.regenHP (unit)).toThrow(new Error("Invalid value. A combatant's current HP cannot be more than the maximum HP."));
+  });
+
+  it('the combatant should return an error if either HP value is negatiive', () => {
+    unit.currHp = -90;
+    unit.maxHp = 100;
+    expect(() => GroundCombat.regenHP (unit)).toThrow(new Error("Invalid value. A combatant's HP values cannot be negative."));
+  });
+
+  it('the combatant should return an error if either HP value is negative', () => {
+    unit.currHp = -90;
+    unit.maxHp = -50;
+    expect(() => GroundCombat.regenHP (unit)).toThrow(new Error("Invalid value. A combatant's HP values cannot be negative."));
+  });
+});
+
+describe('applyDamage()', () => {
+  let unit: Combatant;
+
+  beforeEach(() => {
+    unit = MockService(Combatant);
+    unit.currHp = 100;
+  });
+
+
+  // Normal Damage
+
+  it('the combatant should have the same HP it started with if damage is 0', () => {
+    unit.currShields = 0;
+    unit.currIonic = 100;
+    unit = GroundCombat.applyDamage(unit, 0, DamageType.EnergyP);
+    expect(unit.currHp).toEqual(100);
+    expect(unit.currShields).toEqual(0);
+    expect(unit.currIonic).toEqual(100);
+  });
+
+  it('the combatant should end with 99 HP if damage is 1, starting HP is 100, there are no shields or ionic, and damage type is Energy (P)', () => {
+    unit.currShields = 0;
+    unit.currIonic = 100;
+    unit = GroundCombat.applyDamage(unit, 1, DamageType.EnergyP);
+    expect(unit.currHp).toEqual(99);
+    expect(unit.currShields).toEqual(0);
+    expect(unit.currIonic).toEqual(100);
+  });
+
+  it('the combatant should end with 90 HP and 0 shields if damage is 20, starting HP is 100, shields are 10, ionic is 0, and damage type is Energy (P)', () => {
+    unit.currShields = 10;
+    unit.currIonic = 100;
+    unit = GroundCombat.applyDamage(unit, 20, DamageType.EnergyP);
+    expect(unit.currHp).toEqual(90);
+    expect(unit.currShields).toEqual(0);
+    expect(unit.currIonic).toEqual(100);
+  });
+
+  it('the combatant should end with 90 HP and 0 shields if damage is 20, starting HP is 100, shields are 10, ionic is 0, and damage type is Physical (H)', () => {
+    unit.currShields = 10;
+    unit.currIonic = 100;
+    unit = GroundCombat.applyDamage(unit, 20, DamageType.PhysicalH);
+    expect(unit.currHp).toEqual(90);
+    expect(unit.currShields).toEqual(0);
+    expect(unit.currIonic).toEqual(100);
+  });
+
+  it('the combatant should end with 100 HP and 5 shields if damage is 20, starting HP is 100, shields are 25, ionic is 0, and damage type is Energy (P)', () => {
+    unit.currShields = 25;
+    unit.currIonic = 100;
+    unit = GroundCombat.applyDamage(unit, 20, DamageType.EnergyP);
+    expect(unit.currHp).toEqual(100);
+    expect(unit.currShields).toEqual(5);
+    expect(unit.currIonic).toEqual(100);
+  });
+
+  it('the combatant should end with 100 HP and 0 shields if damage is 20, starting HP is 100, shields are 20, ionic is 0, and damage type is Energy (P)', () => {
+    unit.currShields = 20;
+    unit.currIonic = 100;
+    unit = GroundCombat.applyDamage(unit, 20, DamageType.EnergyP);
+    expect(unit.currHp).toEqual(100);
+    expect(unit.currShields).toEqual(0);
+    expect(unit.currIonic).toEqual(100);
+  });
+
+
+  // Ionic Damage
+
+  it('the combatant should end with 100 HP, 99 ionic if damage is 1, starting HP is 100, ionic is 100, and shields are 0, and damage type is Ionic (P)', () => {
+    unit.currShields = 0;
+    unit.currIonic = 100;
+    unit = GroundCombat.applyDamage(unit, 1, DamageType.IonicP);
+    expect(unit.currHp).toEqual(100);
+    expect(unit.currShields).toEqual(0);
+    expect(unit.currIonic).toEqual(99);
+  });
+
+  it('the combatant should end with 100 HP, 90 ionic and 0 shields if damage is 20, starting HP is 100, shields are 10, ionic is 100, and damage type is Ionic (P)', () => {
+    unit.currShields = 10;
+    unit.currIonic = 100;
+    unit = GroundCombat.applyDamage(unit, 20, DamageType.IonicP);
+    expect(unit.currHp).toEqual(100);
+    expect(unit.currShields).toEqual(0);
+    expect(unit.currIonic).toEqual(90);
+  });
+
+  it('the combatant should end with 100 HP, 90 ionic and 0 shields if damage is 20, starting HP is 100, shields are 10, ionic is 100, and damage type is Ionic (H)', () => {
+    unit.currShields = 10;
+    unit.currIonic = 100;
+    unit = GroundCombat.applyDamage(unit, 20, DamageType.IonicH);
+    expect(unit.currHp).toEqual(100);
+    expect(unit.currShields).toEqual(0);
+    expect(unit.currIonic).toEqual(90);
+  });
+
+  it('the combatant should end with 100 HP, 90 ionic and 0 shields if damage is 20, starting HP is 100, shields are 10, ionic is 100, and damage type is Ionic (O)', () => {
+    unit.currShields = 10;
+    unit.currIonic = 100;
+    unit = GroundCombat.applyDamage(unit, 20, DamageType.IonicO);
+    expect(unit.currHp).toEqual(100);
+    expect(unit.currShields).toEqual(0);
+    expect(unit.currIonic).toEqual(90);
+  });
+
+  it('the combatant should end with 100 HP, 100 ionic and 5 shields if damage is 20, starting HP is 100, shields are 25, ionic is 100, and damage type is Ionic (P)', () => {
+    unit.currShields = 25;
+    unit.currIonic = 100;
+    unit = GroundCombat.applyDamage(unit, 20, DamageType.IonicP);
+    expect(unit.currHp).toEqual(100);
+    expect(unit.currShields).toEqual(5);
+    expect(unit.currIonic).toEqual(100);
+  });
+
+  it('the combatant should end with 100 HP, 100 ionic and 0 shields if damage is 20, starting HP is 100, shields are 20, ionic is 100, and damage type is Ionic (P)', () => {
+    unit.currShields = 20;
+    unit.currIonic = 100;
+    unit = GroundCombat.applyDamage(unit, 20, DamageType.IonicP);
+    expect(unit.currHp).toEqual(100);
+    expect(unit.currShields).toEqual(0);
+    expect(unit.currIonic).toEqual(100);
+  });
+
+  it('the combatant should end with 100 HP, 0 ionic and 0 shields if damage is 20, starting HP is 100, shields are 10, ionic is 0, and damage type is Ionic (P)', () => {
+    unit.currShields = 10;
+    unit.currIonic = 0;
+    unit = GroundCombat.applyDamage(unit, 20, DamageType.IonicP);
+    expect(unit.currHp).toEqual(100);
+    expect(unit.currShields).toEqual(0);
+    expect(unit.currIonic).toEqual(0);
+  });
+
+
+  // Nonlethal Damage
+
+  it('non-lethal damage should not take soft targets below 1 hp', () => {
+    unit.currShields = 10;
+    unit.currIonic = 100;
+    unit.unitType = UnitType.Soft;
+    unit = GroundCombat.applyDamage(unit, 500, DamageType.Nonlethal);
+    expect(unit.currHp).toEqual(1);
+    expect(unit.currShields).toEqual(0);
+    expect(unit.currIonic).toEqual(100);
+  });
+
+  it('non-lethal damage should behave normally against mechannical targets', () => {
+    unit.currShields = 10;
+    unit.currIonic = 100;
+    unit.unitType = UnitType.Mechanical;
+    unit = GroundCombat.applyDamage(unit, 500, DamageType.Nonlethal);
+    expect(unit.currHp).toEqual(0);
+    expect(unit.currShields).toEqual(0);
+    expect(unit.currIonic).toEqual(100);
+  });
+
+  it('non-lethal damage should behave normally against facility targets', () => {
+    unit.currShields = 10;
+    unit.currIonic = 100;
+    unit.unitType = UnitType.Facility;
+    unit = GroundCombat.applyDamage(unit, 500, DamageType.Nonlethal);
+    expect(unit.currHp).toEqual(0);
+    expect(unit.currShields).toEqual(0);
+    expect(unit.currIonic).toEqual(100);
+  });
+
+  it('non-lethal damage should behave normally against vehicle targets', () => {
+    unit.currShields = 10;
+    unit.currIonic = 100;
+    unit.unitType = UnitType.Vehicle;
+    unit = GroundCombat.applyDamage(unit, 500, DamageType.Nonlethal);
+    expect(unit.currHp).toEqual(0);
+    expect(unit.currShields).toEqual(0);
+    expect(unit.currIonic).toEqual(100);
+  });
+
+
+  // Boundary Cases
+
+  it('the combatant should end with 0 HP and 0 shields if damage is 500, starting HP is 100, shields are 10, ionic is 0, and damage type is Energy (P)', () => {
+    unit.currShields = 10;
+    unit.currIonic = 100;
+    unit = GroundCombat.applyDamage(unit, 500, DamageType.EnergyP);
+    expect(unit.currHp).toEqual(0);
+    expect(unit.currShields).toEqual(0);
+    expect(unit.currIonic).toEqual(100);
+  });
+
+  it('the combatant should end with 100 HP, 0 ionic and 0 shields if damage is 500, starting HP is 100, shields are 10, ionic is 100, and damage type is Ionic (P)', () => {
+    unit.currShields = 10;
+    unit.currIonic = 100;
+    unit = GroundCombat.applyDamage(unit, 500, DamageType.IonicP);
+    expect(unit.currHp).toEqual(100);
+    expect(unit.currShields).toEqual(0);
+    expect(unit.currIonic).toEqual(0);
+  });
+
+  it('if damage is negative an error should be returned', () => {
+    unit.currShields = 10;
+    unit.currIonic = 100;
+    expect(() => GroundCombat.applyDamage(unit, -20, DamageType.EnergyP)).toThrow(new Error("Invalid value. Damage cannot be negative."));
+  });
+});
+
+describe('calculateHP()', () => {
+
+  it('should return 0 if all inputs are 0', () => {
+    expect(GroundCombat.calculateHP(0, 0, 0)).toEqual(0);
+  });
+
+  it('should return 10 if strength is 1, HP multiplier is 0, and level is 0', () => {
+    expect(GroundCombat.calculateHP(1, 0, 0)).toEqual(10);
+  });
+
+  it('should return 10 if strength is 1, HP multiplier is 0, and level is 0', () => {
+    expect(GroundCombat.calculateHP(1, 0, 0)).toEqual(10);
+  });
+
+  it('should return 49 if strength is 1, HP multiplier is 1, and level is 1', () => {
+    expect(GroundCombat.calculateHP(1, 1, 1)).toEqual(49);
+  });
+
+  it('should return 49 if strength is 1, HP multiplier is 1, and level is 1', () => {
+    expect(GroundCombat.calculateHP(1, 1, 1)).toEqual(49);
+  });
+
+  it('should return 145 if strength is 3, HP multiplier is 1, and level is 10', () => {
+    expect(GroundCombat.calculateHP(3, 1, 10)).toEqual(145);
+  });
+
+  it('should return 193 if strength is 4, HP multiplier is 2.5, and level is 5', () => {
+    expect(GroundCombat.calculateHP(4, 2.5, 5)).toEqual(193);
+  });
+
+  it('should return 0 if strength is 4, HP multiplier is -2.5, and level is 5', () => {
+    expect(GroundCombat.calculateHP(4, -2.5, 5)).toEqual(0);
+  });
+});
 
 describe('modDamageByType()', () => {
 

@@ -85,7 +85,7 @@
                                         <div *ngIf="blueIsDroid">
                                             <mat-form-field>
                                                 <mat-label>Hull</mat-label>
-                                                <input matInput formControlName="hull" type="number" min="0" step="1" [(ngModel)]="fakeVar" required>
+                                                <input matInput formControlName="hp" type="number" min="0" step="1" [(ngModel)]="fakeVar" required>
                                             </mat-form-field>
                                             <mat-form-field>
                                                 <mat-label>Deflectors</mat-label>
@@ -97,6 +97,10 @@
                                             </mat-form-field>
                                         </div>
                                         <div *ngIf="!blueIsDroid">
+                                            <mat-form-field>
+                                              <mat-label>HP</mat-label>
+                                              <input matInput formControlName="hp" type="number" min="0" step="1" [(ngModel)]="fakeVar">
+                                            </mat-form-field>
                                             <mat-form-field>
                                                 <mat-label>Level</mat-label>
                                                 <input matInput formControlName="level" type="number" min="0" step="1" [(ngModel)]="fakeVar" required>
@@ -296,7 +300,7 @@
                                         <div *ngIf="redIsDroid">
                                             <mat-form-field>
                                                 <mat-label>Hull</mat-label>
-                                                <input matInput formControlName="hull" type="number" min="0" step="1" [(ngModel)]="fakeVar" required>
+                                                <input matInput formControlName="hp" type="number" min="0" step="1" [(ngModel)]="fakeVar" required>
                                             </mat-form-field>
                                             <mat-form-field>
                                                 <mat-label>Deflectors</mat-label>
@@ -308,6 +312,10 @@
                                             </mat-form-field>
                                         </div>
                                         <div *ngIf="!redIsDroid">
+                                            <mat-form-field>
+                                              <mat-label>HP</mat-label>
+                                              <input matInput formControlName="hp" type="number" min="0" step="1" [(ngModel)]="fakeVar">
+                                            </mat-form-field>
                                             <mat-form-field>
                                                 <mat-label>Level</mat-label>
                                                 <input matInput formControlName="level" type="number" min="0" step="1" [(ngModel)]="fakeVar" required>

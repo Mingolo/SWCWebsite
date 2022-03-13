@@ -1,6 +1,51 @@
+import { Combatant } from "app/simulation/models/combatant.model";
 import { DamageType, damageTypeMods, dodgeThreshold, lsWeaponSkill, UnitType, WeaponClass } from "./ground-combat-constants";
 
 export class GroundCombat {
+
+  public static regenHP (unit: Combatant): Combatant {
+    if (unit.currHp < 0 || unit.maxHp < 0)
+      throw new Error("Invalid value. A combatant's HP values cannot be negative.");
+    else if (unit.currHp > unit.maxHp)
+      throw new Error("Invalid value. A combatant's current HP cannot be more than the maximum HP.");
+
+    unit.currHp = unit.currHp + (unit.maxHp * 0.1);
+    unit.currHp = unit.currHp < unit.maxHp ? unit.currHp :  unit.maxHp;
+    return unit;
+  }
+
+  public static applyDamage(unit: Combatant, damage: number, damageType: DamageType): Combatant {
+    if (damage < 0)
+      throw new Error("Invalid value. Damage cannot be negative.");
+
+    if (unit.currShields > 0) {
+      if (unit.currShields > damage) {
+        unit.currShields -= damage;
+        damage = 0;
+      } else {
+        damage = damage - unit.currShields;
+        unit.currShields = 0;
+      }
+    }
+
+    if (damageType === DamageType.IonicH || damageType === DamageType.IonicP || damageType === DamageType.IonicO) {
+      unit.currIonic -= damage;
+      unit.currIonic = unit.currIonic > 0 ? unit.currIonic : 0;
+    } else {
+      unit.currHp -= damage;
+      unit.currHp =  unit.currHp > 0 ?  unit.currHp : 0;
+    }
+
+    if (unit.currHp === 0 && damageType === DamageType.Nonlethal && unit.unitType === UnitType.Soft)
+      unit.currHp = 1;
+
+    return unit;
+  }
+
+  public static calculateHP(strength: number, hpMult: number, level: number) {
+    const hp = Math.round((35 * hpMult) + (2 * level * (strength + hpMult)) + strength * 10);
+    return hp > 0 ? hp : 0;
+  }
 
   public static rollDamage (
     weaponSkill: number, minDamage: number, maxDamage: number,
