@@ -5,6 +5,153 @@ import { DamageType, UnitType, WeaponClass } from './ground-combat-constants';
 import { GroundCombat } from './ground-combat.util';
 
 
+describe('regenIonic()', () => {
+  let unit: Combatant;
+
+  beforeEach(() => {
+    unit = MockService(Combatant);
+  });
+
+  it('the combatant should end with 0 ionic if maxIonic is 0', () => {
+    unit.currIonic = 0;
+    unit.maxIonic = 0;
+    expect(GroundCombat.regenIonic (unit).currIonic).toEqual(0);
+  });
+
+  it('the combatant should end with 1 ionic if current ionic is 1 and maxIonic is 1', () => {
+    unit.currIonic = 1;
+    unit.maxIonic = 1;
+    expect(GroundCombat.regenIonic (unit).currIonic).toEqual(1);
+  });
+
+  it('the combatant should end with 60 ionic if current ionic is 50 and maxIonic is 100', () => {
+    unit.currIonic = 50;
+    unit.maxIonic = 100;
+    expect(GroundCombat.regenIonic (unit).currIonic).toEqual(60);
+  });
+
+  it('the combatant should end with 350 ionic if current ionic is 300 and maxIonic is 500', () => {
+    unit.currIonic = 300;
+    unit.maxIonic = 500;
+    expect(GroundCombat.regenIonic (unit).currIonic).toEqual(350);
+  });
+
+  it('the combatant should end with 355.5 ionic if current ionic is 300 and maxIonic is 555', () => {
+    unit.currIonic = 300;
+    unit.maxIonic = 555;
+    expect(GroundCombat.regenIonic (unit).currIonic).toEqual(355.5);
+  });
+
+  it('the combatant should end with 100 ionic if current ionic is 90 and maxIonic is 100', () => {
+    unit.currIonic = 90;
+    unit.maxIonic = 100;
+    expect(GroundCombat.regenIonic (unit).currIonic).toEqual(100);
+  });
+
+  it('the combatant should end with 100 ionic if current ionic is 98 and maxIonic is 100', () => {
+    unit.currIonic = 98;
+    unit.maxIonic = 100;
+    expect(GroundCombat.regenIonic (unit).currIonic).toEqual(100);
+  });
+
+  it('the combatant should end with 100 ionic if current ionic is 100 and maxIonic is 100', () => {
+    unit.currIonic = 100;
+    unit.maxIonic = 100;
+    expect(GroundCombat.regenIonic (unit).currIonic).toEqual(100);
+  });
+
+  it('the combatant should return an error if maxIonic is less than currIonic', () => {
+    unit.currIonic = 150;
+    unit.maxIonic = 100;
+    expect(() => GroundCombat.regenIonic (unit)).toThrow(new Error("Invalid value. A combatant's current ionic value cannot be more than the maximum ionic value."));
+  });
+
+  it('the combatant should return an error if either ionic value is negative', () => {
+    unit.currIonic = -90;
+    unit.maxIonic = 100;
+    expect(() => GroundCombat.regenIonic (unit)).toThrow(new Error("Invalid value. A combatant's ionic values cannot be negative."));
+  });
+
+  it('the combatant should return an error if either ionic value is negative', () => {
+    unit.currIonic = -90;
+    unit.maxIonic = -50;
+    expect(() => GroundCombat.regenIonic (unit)).toThrow(new Error("Invalid value. A combatant's ionic values cannot be negative."));
+  });
+});
+
+describe('regenShields()', () => {
+  let unit: Combatant;
+
+  beforeEach(() => {
+    unit = MockService(Combatant);
+  });
+
+  it('the combatant should end with 0 shields if maxShields is 0', () => {
+    unit.currShields = 0;
+    unit.maxShields = 0;
+    expect(GroundCombat.regenShields (unit).currShields).toEqual(0);
+  });
+
+  it('the combatant should end with 1 shields if current shields is 1 and maxShields is 1', () => {
+    unit.currShields = 1;
+    unit.maxShields = 1;
+    expect(GroundCombat.regenShields (unit).currShields).toEqual(1);
+  });
+
+  it('the combatant should end with 55 shields if current shields is 50 and maxShields is 100', () => {
+    unit.currShields = 50;
+    unit.maxShields = 100;
+    expect(GroundCombat.regenShields (unit).currShields).toEqual(55);
+  });
+
+  it('the combatant should end with 325 shields if current shields is 300 and maxShields is 500', () => {
+    unit.currShields = 300;
+    unit.maxShields = 500;
+    expect(GroundCombat.regenShields (unit).currShields).toEqual(325);
+  });
+
+  it('the combatant should end with 327.75 shields if current shields is 300 and maxShields is 555', () => {
+    unit.currShields = 300;
+    unit.maxShields = 555;
+    expect(GroundCombat.regenShields (unit).currShields).toEqual(327.75);
+  });
+
+  it('the combatant should end with 100 shields if current shields is 95 and maxShields is 100', () => {
+    unit.currShields = 95;
+    unit.maxShields = 100;
+    expect(GroundCombat.regenShields (unit).currShields).toEqual(100);
+  });
+
+  it('the combatant should end with 100 shields if current shields is 98 and maxShields is 100', () => {
+    unit.currShields = 98;
+    unit.maxShields = 100;
+    expect(GroundCombat.regenShields (unit).currShields).toEqual(100);
+  });
+
+  it('the combatant should end with 100 shields if current shields is 100 and maxShields is 100', () => {
+    unit.currShields = 100;
+    unit.maxShields = 100;
+    expect(GroundCombat.regenShields (unit).currShields).toEqual(100);
+  });
+
+  it('the combatant should return an error if maxShields is less than currShields', () => {
+    unit.currShields = 150;
+    unit.maxShields = 100;
+    expect(() => GroundCombat.regenShields (unit)).toThrow(new Error("Invalid value. A combatant's current deflectors value cannot be more than the maximum deflectors value."));
+  });
+
+  it('the combatant should return an error if either shields value is negative', () => {
+    unit.currShields = -90;
+    unit.maxShields = 100;
+    expect(() => GroundCombat.regenShields (unit)).toThrow(new Error("Invalid value. A combatant's deflector values cannot be negative."));
+  });
+
+  it('the combatant should return an error if either shields value is negative', () => {
+    unit.currShields = -90;
+    unit.maxShields = -50;
+    expect(() => GroundCombat.regenShields (unit)).toThrow(new Error("Invalid value. A combatant's deflector values cannot be negative."));
+  });
+});
 
 describe('regenHP()', () => {
   let unit: Combatant;
@@ -67,7 +214,7 @@ describe('regenHP()', () => {
     expect(() => GroundCombat.regenHP (unit)).toThrow(new Error("Invalid value. A combatant's current HP cannot be more than the maximum HP."));
   });
 
-  it('the combatant should return an error if either HP value is negatiive', () => {
+  it('the combatant should return an error if either HP value is negative', () => {
     unit.currHp = -90;
     unit.maxHp = 100;
     expect(() => GroundCombat.regenHP (unit)).toThrow(new Error("Invalid value. A combatant's HP values cannot be negative."));
@@ -87,7 +234,6 @@ describe('applyDamage()', () => {
     unit = MockService(Combatant);
     unit.currHp = 100;
   });
-
 
   // Normal Damage
 

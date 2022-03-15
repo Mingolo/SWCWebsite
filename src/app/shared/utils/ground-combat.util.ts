@@ -3,6 +3,28 @@ import { DamageType, damageTypeMods, dodgeThreshold, lsWeaponSkill, UnitType, We
 
 export class GroundCombat {
 
+  public static regenIonic (unit: Combatant): Combatant {
+    if (unit.currIonic < 0 || unit.maxIonic < 0)
+      throw new Error("Invalid value. A combatant's ionic values cannot be negative.");
+    else if (unit.currIonic > unit.maxIonic)
+      throw new Error("Invalid value. A combatant's current ionic value cannot be more than the maximum ionic value.");
+
+    unit.currIonic = unit.currIonic + (unit.maxIonic * 0.1);
+    unit.currIonic = unit.currIonic < unit.maxIonic ? unit.currIonic :  unit.maxIonic;
+    return unit;
+  }
+
+  public static regenShields (unit: Combatant): Combatant {
+    if (unit.currShields < 0 || unit.maxShields < 0)
+      throw new Error("Invalid value. A combatant's deflector values cannot be negative.");
+    else if (unit.currShields > unit.maxShields)
+      throw new Error("Invalid value. A combatant's current deflectors value cannot be more than the maximum deflectors value.");
+
+    unit.currShields = unit.currShields + (unit.maxShields * 0.05);
+    unit.currShields = unit.currShields < unit.maxShields ? unit.currShields :  unit.maxShields;
+    return unit;
+  }
+
   public static regenHP (unit: Combatant): Combatant {
     if (unit.currHp < 0 || unit.maxHp < 0)
       throw new Error("Invalid value. A combatant's HP values cannot be negative.");
