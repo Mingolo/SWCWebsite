@@ -1,4 +1,5 @@
-import { DamageType, UnitType, WeaponClass } from "@shared/utils/ground-combat-constants";
+import { UnitType } from "@shared/utils/ground-combat-constants";
+import { Weapon } from "./weapon.model";
 
 export class Combatant {
 
@@ -8,13 +9,5 @@ export class Combatant {
     public force: number, public unitType: UnitType, public maxHp: number,
     public currHp: number, public maxShields: number, public currShields: number,
     public maxIonic: number, public currIonic: number, public armor: number,
-    public primaryClass: WeaponClass, public primaryType: DamageType,
-    public primaryFirepower: number, public primaryMinDamage: number,
-    public primaryMaxDamage: number, public primaryOptRange: number,
-    public primaryDropOff: number, public primaryMaxHits: number,
-    public secondaryClass: WeaponClass, public secondaryType: DamageType,
-    public secondaryDualWield: number, public secondaryFirepower: number,
-    public secondaryMinDamage: number, public secondaryMaxDamage: number,
-    public secondaryOptRange: number, public secondaryDropOff: number,
-    public secondaryMaxHits: number){  }
+    public primaryWeapon: Weapon, public secondaryWeapon: Weapon, public disabled: boolean){  }
 }

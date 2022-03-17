@@ -1,7 +1,14 @@
 import { Combatant } from "app/simulation/models/combatant.model";
-import { DamageType, damageTypeMods, dodgeThreshold, lsWeaponSkill, UnitType, WeaponClass } from "./ground-combat-constants";
+import { DamageType, damageTypeMods, dodgeThreshold, lsWeaponSkill, Tactic, UnitType, WeaponClass } from "./ground-combat-constants";
 
 export class GroundCombat {
+
+  public static rollTarget(squad: Combatant[], tactic: Tactic) {
+    // let avgDamage = squad.reduce((prev, curr) => prev. + curr, 0);
+    // let i = this.rollRandomMinMax(0, squad.length-1);
+
+
+  }
 
   public static regenIonic (unit: Combatant): Combatant {
     if (unit.currIonic < 0 || unit.maxIonic < 0)
@@ -11,6 +18,8 @@ export class GroundCombat {
 
     unit.currIonic = unit.currIonic + (unit.maxIonic * 0.1);
     unit.currIonic = unit.currIonic < unit.maxIonic ? unit.currIonic :  unit.maxIonic;
+
+    unit = this.checkDisabled(unit);
     return unit;
   }
 
@@ -33,6 +42,8 @@ export class GroundCombat {
 
     unit.currHp = unit.currHp + (unit.maxHp * 0.1);
     unit.currHp = unit.currHp < unit.maxHp ? unit.currHp :  unit.maxHp;
+
+    unit = this.checkDisabled(unit);
     return unit;
   }
 
@@ -60,6 +71,19 @@ export class GroundCombat {
 
     if (unit.currHp === 0 && damageType === DamageType.Nonlethal && unit.unitType === UnitType.Soft)
       unit.currHp = 1;
+
+    unit = this.checkDisabled(unit);
+    return unit;
+  }
+
+  public static checkDisabled(unit: Combatant) : Combatant {
+    if(unit.maxIonic > 0 && unit.currIonic <= 0) {
+      unit.disabled = true;
+    } else if (unit.maxHp > 0 && unit.currHp <= 0) {
+      unit.disabled = true
+    } else {
+      unit.disabled = false;
+    }
 
     return unit;
   }

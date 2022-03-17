@@ -5,6 +5,94 @@ import { DamageType, UnitType, WeaponClass } from './ground-combat-constants';
 import { GroundCombat } from './ground-combat.util';
 
 
+describe('checkDisabled()', () => {
+  let unit: Combatant;
+
+  beforeEach(() => {
+    unit = MockService(Combatant);
+  });
+
+  it('the combatant should not be disabled if it has neither HP nor Ionic', () => {
+    unit.currIonic = 0;
+    unit.maxIonic = 0;
+    unit.currHp = 0;
+    unit.maxHp = 0;
+    expect(GroundCombat.checkDisabled(unit).disabled).toEqual(false);
+  });
+
+  it('the combatant should not be disabled if currIonic is 10 and currHp is 10', () => {
+    unit.currIonic = 10;
+    unit.maxIonic = 10;
+    unit.currHp = 10;
+    unit.maxHp = 10;
+    expect(GroundCombat.checkDisabled(unit).disabled).toEqual(false);
+  });
+
+  it('the combatant should not be disabled if currIonic is 7 and currHp is 4', () => {
+    unit.currIonic = 7;
+    unit.maxIonic = 10;
+    unit.currHp = 4;
+    unit.maxHp = 10;
+    expect(GroundCombat.checkDisabled(unit).disabled).toEqual(false);
+  });
+
+  it('the combatant should not be disabled if currIonic is 15 and currHp is 25', () => {
+    unit.currIonic = 15;
+    unit.maxIonic = 10;
+    unit.currHp = 25;
+    unit.maxHp = 10;
+    expect(GroundCombat.checkDisabled(unit).disabled).toEqual(false);
+  });
+
+  it('the combatant should not be disabled if it has neither HP nor Ionic but has values in both currIonic and currHp', () => {
+    unit.currIonic = 23;
+    unit.maxIonic = 0;
+    unit.currHp = 26;
+    unit.maxHp = 0;
+    expect(GroundCombat.checkDisabled(unit).disabled).toEqual(false);
+  });
+
+  it('the combatant should be disabled if it has ionic and hp, and currIonic is 0 and currHp is 25', () => {
+    unit.currIonic = 0;
+    unit.maxIonic = 10;
+    unit.currHp = 25;
+    unit.maxHp = 25;
+    expect(GroundCombat.checkDisabled(unit).disabled).toEqual(true);
+  });
+
+  it('the combatant should be disabled if it has ionic and hp, and currIonic is 10 and currHp is 0', () => {
+    unit.currIonic = 10;
+    unit.maxIonic = 10;
+    unit.currHp = 0;
+    unit.maxHp = 25;
+    expect(GroundCombat.checkDisabled(unit).disabled).toEqual(true);
+  });
+
+  it('the combatant should be disabled if it has ionic and hp, and both are 0', () => {
+    unit.currIonic = 0;
+    unit.maxIonic = 10;
+    unit.currHp = 0;
+    unit.maxHp = 25;
+    expect(GroundCombat.checkDisabled(unit).disabled).toEqual(true);
+  });
+
+  it('the combatant should be disabled if it has hp but no ionic, and hp is 0', () => {
+    unit.currIonic = 0;
+    unit.maxIonic = 0;
+    unit.currHp = 0;
+    unit.maxHp = 25;
+    expect(GroundCombat.checkDisabled(unit).disabled).toEqual(true);
+  });
+
+  it('the combatant should not be disabled if it has hp but no ionic, and hp is 1', () => {
+    unit.currIonic = 0;
+    unit.maxIonic = 0;
+    unit.currHp = 1;
+    unit.maxHp = 25;
+    expect(GroundCombat.checkDisabled(unit).disabled).toEqual(false);
+  });
+});
+
 describe('regenIonic()', () => {
   let unit: Combatant;
 
