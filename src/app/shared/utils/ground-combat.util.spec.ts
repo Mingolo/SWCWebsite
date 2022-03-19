@@ -5,6 +5,88 @@ import { DamageType, UnitType, WeaponClass } from './ground-combat-constants';
 import { GroundCombat } from './ground-combat.util';
 
 
+describe('checkBattleResul()', () => {
+  let unit1: Combatant;
+  let unit2: Combatant;
+  let unit3: Combatant;
+  let unit4: Combatant;
+  let unit5: Combatant;
+  let unit6: Combatant;
+  let squad1 : Combatant[];
+  let squad2: Combatant[];
+
+  beforeEach(() => {
+    unit1 = MockService(Combatant);
+    unit2 = MockService(Combatant);
+    unit3 = MockService(Combatant);
+    unit4 = MockService(Combatant);
+    unit5 = MockService(Combatant);
+    unit6 = MockService(Combatant);
+    squad1 = [unit1, unit2, unit3];
+    squad2 = [unit4, unit5, unit6];
+  });
+
+  it('should return 0 if neither squad is disabled', () => {
+    unit1.disabled = false;
+    unit2.disabled = false;
+    unit3.disabled = false;
+    unit4.disabled = false;
+    unit5.disabled = false;
+    unit6.disabled = false;
+    expect(GroundCombat.checkBattleResult(squad1, squad2)).toEqual(0);
+  });
+
+  it('should return 0 if neither squad is disabled, even if some units within both squads are disabled', () => {
+    unit1.disabled = false;
+    unit2.disabled = true;
+    unit3.disabled = true;
+    unit4.disabled = true;
+    unit5.disabled = true;
+    unit6.disabled = false;
+    expect(GroundCombat.checkBattleResult(squad1, squad2)).toEqual(0);
+  });
+
+  it('should return 0 if neither squad is disabled, even if some units only one of the squads are disabled', () => {
+    unit1.disabled = false;
+    unit2.disabled = false;
+    unit3.disabled = false;
+    unit4.disabled = true;
+    unit5.disabled = true;
+    unit6.disabled = false;
+    expect(GroundCombat.checkBattleResult(squad1, squad2)).toEqual(0);
+  });
+
+  it('should return -1 if both squads are disabled', () => {
+    unit1.disabled = true;
+    unit2.disabled = true;
+    unit3.disabled = true;
+    unit4.disabled = true;
+    unit5.disabled = true;
+    unit6.disabled = true;
+    expect(GroundCombat.checkBattleResult(squad1, squad2)).toEqual(-1);
+  });
+
+  it('should return squad1 if squad2 is disabled but squad1 is not', () => {
+    unit1.disabled = true;
+    unit2.disabled = true;
+    unit3.disabled = false;
+    unit4.disabled = true;
+    unit5.disabled = true;
+    unit6.disabled = true;
+    expect(GroundCombat.checkBattleResult(squad1, squad2)).toEqual(squad1);
+  });
+
+  it('should return squad2 if squad1 is disabled but squad2 is not', () => {
+    unit1.disabled = true;
+    unit2.disabled = true;
+    unit3.disabled = true;
+    unit4.disabled = true;
+    unit5.disabled = true;
+    unit6.disabled = false;
+    expect(GroundCombat.checkBattleResult(squad1, squad2)).toEqual(squad2);
+  });
+});
+
 describe('checkDisabled()', () => {
   let unit: Combatant;
 

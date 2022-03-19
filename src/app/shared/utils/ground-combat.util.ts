@@ -3,11 +3,23 @@ import { DamageType, damageTypeMods, dodgeThreshold, lsWeaponSkill, Tactic, Unit
 
 export class GroundCombat {
 
-  public static rollTarget(squad: Combatant[], tactic: Tactic) {
+  public static runCombatRound (squad1: Combatant[], squad2: Combatant[]) {
+
+  }
+
+  public static rollTarget (squad: Combatant[], attackTactic: Tactic) : Combatant {
     // let avgDamage = squad.reduce((prev, curr) => prev. + curr, 0);
-    // let i = this.rollRandomMinMax(0, squad.length-1);
+    let i = this.rollRandomMinMax(0, squad.length-1);
+    const squadDisabled = this.checkSquadDisabled (squad);
 
+    while (
+      attackTactic === Tactic.SpreadFire &&
+      !squadDisabled &&
+      squad[i].disabled) {
+        i = this.rollRandomMinMax(0, squad.length-1);
+      }
 
+      return squad[i];
   }
 
   public static regenIonic (unit: Combatant): Combatant {
@@ -76,6 +88,24 @@ export class GroundCombat {
     return unit;
   }
 
+  public static checkBattleResult (squad1: Combatant[], squad2: Combatant[]) {
+    const oneDisabled  = this.checkSquadDisabled (squad1);
+    const twoDisabled  = this.checkSquadDisabled (squad2);
+
+    if (oneDisabled && twoDisabled)   // Both disabled, return -1 to indicate a tie
+      return -1;
+    else if (oneDisabled)             // squad2 victory
+      return squad2;
+    else if (twoDisabled)             // squad1 victory
+      return squad1;
+    else                              // Neither squad disabled yet, return 0 to indicate battle hasn't ended
+      return 0;
+  }
+
+  public static checkSquadDisabled (squad: Combatant[]) {
+    return squad.reduce((prev, curr) => prev && curr.disabled, true);
+  }
+
   public static checkDisabled(unit: Combatant) : Combatant {
     if(unit.maxIonic > 0 && unit.currIonic <= 0) {
       unit.disabled = true;
@@ -124,7 +154,7 @@ export class GroundCombat {
     return Math.floor(Math.random() * 100) + 1;
   }
 
-  public static rollRandomMinMax(min: number, max: number): number {
+  public static rollRandomMinMax(min: number, max: number): number {          // random number between min and max with both included
     return Math.floor(Math.random() * (max - min + 1) ) + min;
   }
 
