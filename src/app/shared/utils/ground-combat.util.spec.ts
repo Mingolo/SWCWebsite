@@ -1,9 +1,75 @@
 import { TestBed } from '@angular/core/testing';
 import { Combatant } from 'app/simulation/models/combatant.model';
+import { Weapon } from 'app/simulation/models/weapon.model';
 import { MockService } from 'ng-mocks';
 import { DamageType, UnitType, WeaponClass } from './ground-combat-constants';
 import { GroundCombat } from './ground-combat.util';
 
+
+describe('processDeaths()', () => {
+
+
+});
+
+describe('selectWeapon()', () => {
+  let weapon1: Weapon;
+  let weapon2: Weapon;
+
+  beforeEach(() => {
+    weapon1 = MockService(Weapon);
+    weapon2 = MockService(Weapon);
+  });
+
+  it('should return weapon1 if current range is 0 and both weapons optimal ranges are also 0', () => {
+    weapon1.optRange = 0;
+    weapon2.optRange = 0;
+    expect(GroundCombat.selectWeapon(weapon1, weapon2, 0)).toBe(weapon1);
+  });
+
+  it('should return weapon1 if weapon optimal ranges are the same', () => {
+    weapon1.optRange = 5;
+    weapon2.optRange = 5;
+    expect(GroundCombat.selectWeapon(weapon1, weapon2, 3)).toBe(weapon1);
+  });
+
+  it('should return weapon1 if weapon optimal ranges are equally distant from current range', () => {
+    weapon1.optRange = 5;
+    weapon2.optRange = 1;
+    expect(GroundCombat.selectWeapon(weapon1, weapon2, 3)).toBe(weapon1);
+  });
+
+  it('should return weapon1 if its optimal range is closest to current range', () => {
+    weapon1.optRange = 6;
+    weapon2.optRange = 1;
+    expect(GroundCombat.selectWeapon(weapon1, weapon2, 4)).toBe(weapon1);
+  });
+
+  it('should return weapon2 if its optimal range is closest to current range', () => {
+    weapon1.optRange = 7;
+    weapon2.optRange = 2;
+    expect(GroundCombat.selectWeapon(weapon1, weapon2, 4)).toBe(weapon2);
+  });
+
+  it('should return weapon1 if weapon2 is a dualWielded offhand', () => {
+    weapon1.optRange = 7;
+    weapon2.optRange = 2;
+    weapon2.dualWielded = true;
+    expect(GroundCombat.selectWeapon(weapon1, weapon2, 4)).toBe(weapon1);
+  });
+
+  it('should return weapon1 if its optimal range is closest to current range and  weapon2 is a dualWielded offhand', () => {
+    weapon1.optRange = 6;
+    weapon2.optRange = 1;
+    weapon2.dualWielded = true;
+    expect(GroundCombat.selectWeapon(weapon1, weapon2, 4)).toBe(weapon1);
+  });
+
+  it('should return weapon2 if its optimal range is closest to current range, even with very large values', () => {
+    weapon1.optRange = 4567;
+    weapon2.optRange = 150;
+    expect(GroundCombat.selectWeapon(weapon1, weapon2, 400)).toBe(weapon2);
+  });
+});
 
 describe('checkBattleResul()', () => {
   let unit1: Combatant;
@@ -73,7 +139,7 @@ describe('checkBattleResul()', () => {
     unit4.disabled = true;
     unit5.disabled = true;
     unit6.disabled = true;
-    expect(GroundCombat.checkBattleResult(squad1, squad2)).toEqual(squad1);
+    expect(GroundCombat.checkBattleResult(squad1, squad2)).toBe(squad1);
   });
 
   it('should return squad2 if squad1 is disabled but squad2 is not', () => {
@@ -83,7 +149,37 @@ describe('checkBattleResul()', () => {
     unit4.disabled = true;
     unit5.disabled = true;
     unit6.disabled = false;
-    expect(GroundCombat.checkBattleResult(squad1, squad2)).toEqual(squad2);
+    expect(GroundCombat.checkBattleResult(squad1, squad2)).toBe(squad2);
+  });
+
+  it('should return -1 if all units in both squads have been killed', () => {
+    unit1.disabled = false;
+    unit2.disabled = false;
+    unit3.disabled = false;
+    unit4.disabled = false;
+    unit5.disabled = false;
+    unit6.disabled = false;
+    expect(GroundCombat.checkBattleResult([], [])).toEqual(-1);
+  });
+
+  it('should return squad1 if all units in squad2 have been killed', () => {
+    unit1.disabled = false;
+    unit2.disabled = false;
+    unit3.disabled = false;
+    unit4.disabled = false;
+    unit5.disabled = false;
+    unit6.disabled = false;
+    expect(GroundCombat.checkBattleResult(squad1, [])).toBe(squad1);
+  });
+
+  it('should return squad2 if all units in squad1 have been killed', () => {
+    unit1.disabled = false;
+    unit2.disabled = false;
+    unit3.disabled = false;
+    unit4.disabled = false;
+    unit5.disabled = false;
+    unit6.disabled = false;
+    expect(GroundCombat.checkBattleResult([], squad2)).toBe(squad2);
   });
 });
 
@@ -633,6 +729,108 @@ describe('calculateHP()', () => {
   });
 });
 
+describe('rollDamage()', () => {
+
+  it('rolled damage should be 0 if all inputs are 0, no penalties, no critical hit, and rolled number was 0', () => {
+    spyOn(GroundCombat, "rollRandomMinMax").and.returnValue(0);     // damage roll
+    spyOn(GroundCombat, "rollPercentage").and.returnValue(1);       //critical hit roll
+    expect(GroundCombat.rollDamage (
+      /* weaponSkill */ 0,/* minDamage */ 0,/* maxDamage */ 0,
+      /* attackFirepower */ 1,/* defendArmor */ 0,/* damageType */ DamageType.EnergyP,
+      /* attackUnitType */ UnitType.Soft, /* defendUnitType */ UnitType.Soft,/* dualWielded */ false)).toEqual(0);
+  });
+
+  it('rolled damage should be 0.5 if all inputs are 1, no penalties, no critical hit, and rolled number was 1', () => {
+    spyOn(GroundCombat, "rollRandomMinMax").and.returnValue(1);     // damage roll
+    spyOn(GroundCombat, "rollPercentage").and.returnValue(1);       //critical hit roll
+    expect(GroundCombat.rollDamage (
+      /* weaponSkill */ 1,/* minDamage */ 1,/* maxDamage */ 1,
+      /* attackFirepower */ 1,/* defendArmor */ 1,/* damageType */ DamageType.EnergyP,
+      /* attackUnitType */ UnitType.Soft, /* defendUnitType */ UnitType.Soft,/* dualWielded */ false)).toEqual(0.5);
+  });
+
+  it('rolled damage should be ~9.053 if all inputs are average, no penalties, no critical hit, and rolled number was 15', () => {
+    spyOn(GroundCombat, "rollRandomMinMax").and.returnValue(15);     // damage roll
+    spyOn(GroundCombat, "rollPercentage").and.returnValue(50);       //critical hit roll
+    expect(GroundCombat.rollDamage (
+      /* weaponSkill */ 3,/* minDamage */ 10,/* maxDamage */ 20,
+      /* attackFirepower */ 13,/* defendArmor */ 15,/* damageType */ DamageType.EnergyP,
+      /* attackUnitType */ UnitType.Soft, /* defendUnitType */ UnitType.Soft,/* dualWielded */ false)).toBeCloseTo(9.053, 2);
+  });
+
+  it('rolled damage should be ~13.928 if all inputs are average, no penalties, with critical hit, and rolled number was 15', () => {
+    spyOn(GroundCombat, "rollRandomMinMax").and.returnValue(15);     // damage roll
+    spyOn(GroundCombat, "rollPercentage").and.returnValue(2);       //critical hit roll
+    expect(GroundCombat.rollDamage (
+      /* weaponSkill */ 3,/* minDamage */ 10,/* maxDamage */ 20,
+      /* attackFirepower */ 13,/* defendArmor */ 15,/* damageType */ DamageType.EnergyP,
+      /* attackUnitType */ UnitType.Soft, /* defendUnitType */ UnitType.Soft,/* dualWielded */ false)).toBeCloseTo(13.928, 2);
+  });
+
+  it('rolled damage should be ~9.053 if all inputs are average, no penalties, no critical hit (but missed it only by 1), and rolled number was 15', () => {
+    spyOn(GroundCombat, "rollRandomMinMax").and.returnValue(15);     // damage roll
+    spyOn(GroundCombat, "rollPercentage").and.returnValue(3);       //critical hit roll
+    expect(GroundCombat.rollDamage (
+      /* weaponSkill */ 3,/* minDamage */ 10,/* maxDamage */ 20,
+      /* attackFirepower */ 13,/* defendArmor */ 15,/* damageType */ DamageType.EnergyP,
+      /* attackUnitType */ UnitType.Soft, /* defendUnitType */ UnitType.Soft,/* dualWielded */ false)).toBeCloseTo(9.053, 2);
+  });
+
+  it('rolled damage should be ~9.053 if all inputs are average, no penalties, no critical hit (but missed it only by 2), and rolled number was 15', () => {
+    spyOn(GroundCombat, "rollRandomMinMax").and.returnValue(15);     // damage roll
+    spyOn(GroundCombat, "rollPercentage").and.returnValue(4);       //critical hit roll
+    expect(GroundCombat.rollDamage (
+      /* weaponSkill */ 3,/* minDamage */ 10,/* maxDamage */ 20,
+      /* attackFirepower */ 13,/* defendArmor */ 15,/* damageType */ DamageType.EnergyP,
+      /* attackUnitType */ UnitType.Soft, /* defendUnitType */ UnitType.Soft,/* dualWielded */ false)).toBeCloseTo(9.053, 2);
+  });
+
+  it('rolled damage should be ~4.526 if all inputs are average, dual wield penalties, no critical hit, and rolled number was 15', () => {
+    spyOn(GroundCombat, "rollRandomMinMax").and.returnValue(15);     // damage roll
+    spyOn(GroundCombat, "rollPercentage").and.returnValue(50);       //critical hit roll
+    expect(GroundCombat.rollDamage (
+      /* weaponSkill */ 3,/* minDamage */ 10,/* maxDamage */ 20,
+      /* attackFirepower */ 13,/* defendArmor */ 15,/* damageType */ DamageType.EnergyP,
+      /* attackUnitType */ UnitType.Soft, /* defendUnitType */ UnitType.Soft,/* dualWielded */ true)).toBeCloseTo(4.526, 2);
+  });
+
+  it('rolled damage should be ~9.053 if all inputs are average, dual wield penalties but is droid, no critical hit, and rolled number was 15', () => {
+    spyOn(GroundCombat, "rollRandomMinMax").and.returnValue(15);     // damage roll
+    spyOn(GroundCombat, "rollPercentage").and.returnValue(50);       //critical hit roll
+    expect(GroundCombat.rollDamage (
+      /* weaponSkill */ 3,/* minDamage */ 10,/* maxDamage */ 20,
+      /* attackFirepower */ 13,/* defendArmor */ 15,/* damageType */ DamageType.EnergyP,
+      /* attackUnitType */ UnitType.Mechanical, /* defendUnitType */ UnitType.Soft,/* dualWielded */ true)).toBeCloseTo(9.053, 2);
+  });
+
+  it('rolled damage should be ~1.358 if all inputs are average, dual wield and damageType penalties, no critical hit, and rolled number was 15', () => {
+    spyOn(GroundCombat, "rollRandomMinMax").and.returnValue(15);     // damage roll
+    spyOn(GroundCombat, "rollPercentage").and.returnValue(50);       //critical hit roll
+    expect(GroundCombat.rollDamage (
+      /* weaponSkill */ 3,/* minDamage */ 10,/* maxDamage */ 20,
+      /* attackFirepower */ 13,/* defendArmor */ 15,/* damageType */ DamageType.ConcussiveH,
+      /* attackUnitType */ UnitType.Soft, /* defendUnitType */ UnitType.Facility,/* dualWielded */ true)).toBeCloseTo(1.358, 2);
+  });
+
+  it('rolled damage should be 100 if all attack values are high and defend values are low, no penalties, no critical hit, and rolled number was 100', () => {
+    spyOn(GroundCombat, "rollRandomMinMax").and.returnValue(100);     // damage roll
+    spyOn(GroundCombat, "rollPercentage").and.returnValue(50);       //critical hit roll
+    expect(GroundCombat.rollDamage (
+      /* weaponSkill */ 5,/* minDamage */ 50,/* maxDamage */ 100,
+      /* attackFirepower */ 25,/* defendArmor */ 0,/* damageType */ DamageType.EnergyP,
+      /* attackUnitType */ UnitType.Soft, /* defendUnitType */ UnitType.Soft,/* dualWielded */ false)).toEqual(100);
+  });
+
+  it('rolled damage should be 0.038 if all attack values are low and defend values are high, no penalties, no critical hit, and rolled number was 1', () => {
+    spyOn(GroundCombat, "rollRandomMinMax").and.returnValue(1);      // damage roll
+    spyOn(GroundCombat, "rollPercentage").and.returnValue(50);       //critical hit roll
+    expect(GroundCombat.rollDamage (
+      /* weaponSkill */ 0,/* minDamage */ 1,/* maxDamage */ 5,
+      /* attackFirepower */ 1,/* defendArmor */ 25,/* damageType */ DamageType.EnergyP,
+      /* attackUnitType */ UnitType.Soft, /* defendUnitType */ UnitType.Soft,/* dualWielded */ false)).toBeCloseTo(0.038, 2);
+  });
+});
+
 describe('modDamageByType()', () => {
 
   it('should return 0 if damageIn is 0', () => {
@@ -790,6 +988,137 @@ describe('getDamageSkillMod()', () => {
 
   it('should return 1.5 if weaponSkill is 0', () => {
     expect(GroundCombat.getDamageSkillMod(5)).toEqual(1.5);
+  });
+});
+
+describe('rollHit()', () => {
+
+  it('should return false if hit chance is 0 and rolled percentage was 1', () => {
+    spyOn(GroundCombat, "rollPercentage").and.returnValue(1);
+    expect(GroundCombat.rollHit(0)).toEqual(false);
+  });
+
+  it('should return false if hit chance is 1 and rolled percentage was 1', () => {
+    spyOn(GroundCombat, "rollPercentage").and.returnValue(1);
+    expect(GroundCombat.rollHit(1)).toEqual(false);
+  });
+
+  it('should return false if hit chance is 50 and rolled percentage was 50', () => {
+    spyOn(GroundCombat, "rollPercentage").and.returnValue(50);
+    expect(GroundCombat.rollHit(50)).toEqual(false);
+  });
+
+  it('should return false if hit chance is 50 and rolled percentage was 51', () => {
+    spyOn(GroundCombat, "rollPercentage").and.returnValue(51);
+    expect(GroundCombat.rollHit(50)).toEqual(false);
+  });
+
+  it('should return true if hit chance is 50 and rolled percentage was 49', () => {
+    spyOn(GroundCombat, "rollPercentage").and.returnValue(49);
+    expect(GroundCombat.rollHit(50)).toEqual(true);
+  });
+
+  it('should return false if hit chance is 99 and rolled percentage was 100', () => {
+    spyOn(GroundCombat, "rollPercentage").and.returnValue(100);
+    expect(GroundCombat.rollHit(99)).toEqual(false);
+  });
+
+  it('should return true if hit chance is 99 and rolled percentage was 98', () => {
+    spyOn(GroundCombat, "rollPercentage").and.returnValue(98);
+    expect(GroundCombat.rollHit(99)).toEqual(true);
+  });
+});
+
+describe('getHitChance()', () => {
+
+  it('hit chance should be 58 if all inputs are 0', () => {
+    expect(GroundCombat.getHitChance(
+      /* defendDodge */ 0,/* optimumRange */ 0,/* currentRange */ 0,
+      /* weaponDropOff */ 0,/* dex */ 0,/* pwSkill */ 0,
+      /* npwSkill */ 0,/* hwSkill */ 0,/* lightSkill */ 0,
+      /* attackForce */ false,/* weaponClass */ WeaponClass.Projectile,/* damageType */ DamageType.EnergyP,
+      /* dualWielded */ false,/* attackUnitType */ UnitType.Soft)).toEqual(58);
+  });
+
+  it('hit chance should be 29 if all inputs are 1 and weapon is dual-wielded off-hand', () => {
+    expect(GroundCombat.getHitChance(
+      /* defendDodge */ 1,/* optimumRange */ 1,/* currentRange */ 1,
+      /* weaponDropOff */ 1,/* dex */ 1,/* pwSkill */ 1,
+      /* npwSkill */ 1,/* hwSkill */ 1,/* lightSkill */ 1,
+      /* attackForce */ true,/* weaponClass */ WeaponClass.Projectile,/* damageType */ DamageType.EnergyP,
+      /* dualWielded */ true,/* attackUnitType */ UnitType.Soft)).toEqual(29);
+  });
+
+  it('hit chance should be 72 if at average skill values, no range or dual-wielding penalties', () => {
+    expect(GroundCombat.getHitChance(
+      /* defendDodge */ 3,/* optimumRange */ 4,/* currentRange */ 4,
+      /* weaponDropOff */ 4.5,/* dex */ 3,/* pwSkill */ 2,
+      /* npwSkill */ 2,/* hwSkill */ 2,/* lightSkill */ 0,
+      /* attackForce */ false,/* weaponClass */ WeaponClass.Projectile,/* damageType */ DamageType.EnergyP,
+      /* dualWielded */ false,/* attackUnitType */ UnitType.Soft)).toEqual(72);
+  });
+
+  it('hit chance should be 36 if at average skill values with dual-wielding penalties as a non-droid', () => {
+    expect(GroundCombat.getHitChance(
+      /* defendDodge */ 3,/* optimumRange */ 4,/* currentRange */ 4,
+      /* weaponDropOff */ 4.5,/* dex */ 3,/* pwSkill */ 2,
+      /* npwSkill */ 2,/* hwSkill */ 2,/* lightSkill */ 0,
+      /* attackForce */ false,/* weaponClass */ WeaponClass.Projectile,/* damageType */ DamageType.EnergyP,
+      /* dualWielded */ true,/* attackUnitType */ UnitType.Soft)).toEqual(36);
+  });
+
+  it('hit chance should be 72 if at average skill values with dual-wielding penalties as a droid', () => {
+    expect(GroundCombat.getHitChance(
+      /* defendDodge */ 3,/* optimumRange */ 4,/* currentRange */ 4,
+      /* weaponDropOff */ 4.5,/* dex */ 3,/* pwSkill */ 2,
+      /* npwSkill */ 2,/* hwSkill */ 2,/* lightSkill */ 0,
+      /* attackForce */ false,/* weaponClass */ WeaponClass.Projectile,/* damageType */ DamageType.EnergyP,
+      /* dualWielded */ true,/* attackUnitType */ UnitType.Mechanical)).toEqual(72);
+  });
+
+  it('hit chance should be ~71.11 if at average skill values with range penalty of -2', () => {
+    expect(GroundCombat.getHitChance(
+      /* defendDodge */ 3,/* optimumRange */ 4,/* currentRange */ 2,
+      /* weaponDropOff */ 4.5,/* dex */ 3,/* pwSkill */ 2,
+      /* npwSkill */ 2,/* hwSkill */ 2,/* lightSkill */ 0,
+      /* attackForce */ false,/* weaponClass */ WeaponClass.Projectile,/* damageType */ DamageType.EnergyP,
+      /* dualWielded */ false,/* attackUnitType */ UnitType.Soft)).toBeCloseTo(71.11, 2);
+  });
+
+  it('hit chance should be ~35.56 if at average skill values with range penalty of -2 and dual-wielding penalties', () => {
+    expect(GroundCombat.getHitChance(
+      /* defendDodge */ 3,/* optimumRange */ 4,/* currentRange */ 2,
+      /* weaponDropOff */ 4.5,/* dex */ 3,/* pwSkill */ 2,
+      /* npwSkill */ 2,/* hwSkill */ 2,/* lightSkill */ 0,
+      /* attackForce */ false,/* weaponClass */ WeaponClass.Projectile,/* damageType */ DamageType.EnergyP,
+      /* dualWielded */ true,/* attackUnitType */ UnitType.Soft)).toBeCloseTo(35.56, 2);
+  });
+
+  it('hit chance should be 83 if all skill values are at maximum, no penalties, forcie attacking with lightsaber', () => {
+    expect(GroundCombat.getHitChance(
+      /* defendDodge */ 5,/* optimumRange */ 4,/* currentRange */ 4,
+      /* weaponDropOff */ 4.5,/* dex */ 5,/* pwSkill */ 5,
+      /* npwSkill */ 5,/* hwSkill */ 5,/* lightSkill */ 5,
+      /* attackForce */ true,/* weaponClass */ WeaponClass.NonProjectile,/* damageType */ DamageType.Lightsaber,
+      /* dualWielded */ false,/* attackUnitType */ UnitType.Soft)).toEqual(83);
+  });
+
+  it('hit chance should be 99 if attack skills are at maximum but dodge is 0, no penalties, forcie attacking with lightsaber', () => {
+    expect(GroundCombat.getHitChance(
+      /* defendDodge */ 0,/* optimumRange */ 4,/* currentRange */ 4,
+      /* weaponDropOff */ 4.5,/* dex */ 5,/* pwSkill */ 5,
+      /* npwSkill */ 5,/* hwSkill */ 5,/* lightSkill */ 5,
+      /* attackForce */ true,/* weaponClass */ WeaponClass.NonProjectile,/* damageType */ DamageType.Lightsaber,
+      /* dualWielded */ false,/* attackUnitType */ UnitType.Soft)).toEqual(99);
+  });
+
+  it('hit chance should be 3 if dodge is at maximum but attack skills are all 0, no penalties, forcie attacking with lightsaber', () => {
+    expect(GroundCombat.getHitChance(
+      /* defendDodge */ 5,/* optimumRange */ 4,/* currentRange */ 4,
+      /* weaponDropOff */ 4.5,/* dex */ 0,/* pwSkill */ 0,
+      /* npwSkill */ 0,/* hwSkill */ 0,/* lightSkill */ 0,
+      /* attackForce */ true,/* weaponClass */ WeaponClass.NonProjectile,/* damageType */ DamageType.Lightsaber,
+      /* dualWielded */ false,/* attackUnitType */ UnitType.Soft)).toEqual(3);
   });
 });
 
