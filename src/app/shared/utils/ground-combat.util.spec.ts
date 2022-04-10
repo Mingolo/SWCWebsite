@@ -6,11 +6,6 @@ import { DamageType, UnitType, WeaponClass } from './ground-combat-constants';
 import { GroundCombat } from './ground-combat.util';
 
 
-describe('processDeaths()', () => {
-
-
-});
-
 describe('selectWeapon()', () => {
   let weapon1: Weapon;
   let weapon2: Weapon;
@@ -183,91 +178,205 @@ describe('checkBattleResul()', () => {
   });
 });
 
-describe('checkDisabled()', () => {
-  let unit: Combatant;
+describe('checkSquadCasualties()', () => {
+  let unit1: Combatant;
+  let unit2: Combatant;
+  let unit3: Combatant;
+  let squad : Combatant[];
 
   beforeEach(() => {
-    unit = MockService(Combatant);
+    unit1 = MockService(Combatant);
+    unit2 = MockService(Combatant);
+    unit3 = MockService(Combatant);
+    squad = [unit1, unit2, unit3];
   });
 
-  it('the combatant should not be disabled if it has neither HP nor Ionic', () => {
-    unit.currIonic = 0;
-    unit.maxIonic = 0;
-    unit.currHp = 0;
-    unit.maxHp = 0;
-    expect(GroundCombat.checkDisabled(unit).disabled).toEqual(false);
+  it('should return true if there are no units in the squad', () => {
+    expect(GroundCombat.checkSquadCasualties([])).toEqual(true);
   });
 
-  it('the combatant should not be disabled if currIonic is 10 and currHp is 10', () => {
-    unit.currIonic = 10;
-    unit.maxIonic = 10;
-    unit.currHp = 10;
-    unit.maxHp = 10;
-    expect(GroundCombat.checkDisabled(unit).disabled).toEqual(false);
+  it('should return true if all units are disabled', () => {
+    unit1.disabled = true;
+    unit2.disabled = true;
+    unit3.disabled = true;
+    expect(GroundCombat.checkSquadCasualties(squad)).toEqual(true);
   });
 
-  it('the combatant should not be disabled if currIonic is 7 and currHp is 4', () => {
-    unit.currIonic = 7;
-    unit.maxIonic = 10;
-    unit.currHp = 4;
-    unit.maxHp = 10;
-    expect(GroundCombat.checkDisabled(unit).disabled).toEqual(false);
+  it('should return false if at least one unit is not disabled', () => {
+    unit1.disabled = true;
+    unit2.disabled = true;
+    unit3.disabled = false;
+    expect(GroundCombat.checkSquadCasualties(squad)).toEqual(false);
   });
 
-  it('the combatant should not be disabled if currIonic is 15 and currHp is 25', () => {
-    unit.currIonic = 15;
-    unit.maxIonic = 10;
-    unit.currHp = 25;
-    unit.maxHp = 10;
-    expect(GroundCombat.checkDisabled(unit).disabled).toEqual(false);
+  it('should return false if no units are disabled', () => {
+    unit1.disabled = false;
+    unit2.disabled = false;
+    unit3.disabled = false;
+    expect(GroundCombat.checkSquadCasualties(squad)).toEqual(false);
+  });
+});
+
+describe('processCasualties()', () => {
+  let unit1: Combatant;
+  let unit2: Combatant;
+  let unit3: Combatant;
+  let squad : Combatant[];
+
+  beforeEach(() => {
+    unit1 = MockService(Combatant);
+    unit2 = MockService(Combatant);
+    unit3 = MockService(Combatant);
+    squad = [unit1, unit2, unit3];
   });
 
-  it('the combatant should not be disabled if it has neither HP nor Ionic but has values in both currIonic and currHp', () => {
-    unit.currIonic = 23;
-    unit.maxIonic = 0;
-    unit.currHp = 26;
-    unit.maxHp = 0;
-    expect(GroundCombat.checkDisabled(unit).disabled).toEqual(false);
+  it('a squad with all units dead should be returned with no changes', () => {
+    expect(GroundCombat.processCasualties ([]).length).toEqual(0);
   });
 
-  it('the combatant should be disabled if it has ionic and hp, and currIonic is 0 and currHp is 25', () => {
-    unit.currIonic = 0;
-    unit.maxIonic = 10;
-    unit.currHp = 25;
-    unit.maxHp = 25;
-    expect(GroundCombat.checkDisabled(unit).disabled).toEqual(true);
+  it('a squad with only 1 unit that has neither HP nor Ionic should return the same squad unchanged', () => {
+    unit1.currIonic = 0;
+    unit1.maxIonic = 0;
+    unit1.currHp = 0;
+    unit1.maxHp = 0;
+    unit1.disabled = false;
+    expect(GroundCombat.processCasualties (squad.slice(0, 1)).length).toEqual(1);
+    expect(squad[0].currIonic).toEqual(0);
+    expect(squad[0].maxIonic).toEqual(0);
+    expect(squad[0].currHp).toEqual(0);
+    expect(squad[0].maxHp).toEqual(0);
+    expect(squad[0].disabled).toEqual(false);
   });
 
-  it('the combatant should be disabled if it has ionic and hp, and currIonic is 10 and currHp is 0', () => {
-    unit.currIonic = 10;
-    unit.maxIonic = 10;
-    unit.currHp = 0;
-    unit.maxHp = 25;
-    expect(GroundCombat.checkDisabled(unit).disabled).toEqual(true);
+  it('a squad with only 1 unit that is both disabled and dead should return an empty squad', () => {
+    unit1.currIonic = 0;
+    unit1.maxIonic = 10;
+    unit1.currHp = 0;
+    unit1.maxHp = 10;
+    expect(GroundCombat.processCasualties (squad.slice(0, 1)).length).toEqual(0);
   });
 
-  it('the combatant should be disabled if it has ionic and hp, and both are 0', () => {
-    unit.currIonic = 0;
-    unit.maxIonic = 10;
-    unit.currHp = 0;
-    unit.maxHp = 25;
-    expect(GroundCombat.checkDisabled(unit).disabled).toEqual(true);
+  it('a squad with only 1 unit that is disabled should change that unit to be disabled', () => {
+    unit1.currIonic = 0;
+    unit1.maxIonic = 10;
+    unit1.currHp = 5;
+    unit1.maxHp = 10;
+    unit1.disabled = false;
+    expect(GroundCombat.processCasualties (squad.slice(0, 1)).length).toEqual(1);
+    expect(squad[0].currIonic).toEqual(0);
+    expect(squad[0].maxIonic).toEqual(10);
+    expect(squad[0].currHp).toEqual(5);
+    expect(squad[0].maxHp).toEqual(10);
+    expect(squad[0].disabled).toEqual(true);
   });
 
-  it('the combatant should be disabled if it has hp but no ionic, and hp is 0', () => {
-    unit.currIonic = 0;
-    unit.maxIonic = 0;
-    unit.currHp = 0;
-    unit.maxHp = 25;
-    expect(GroundCombat.checkDisabled(unit).disabled).toEqual(true);
+  it('a squad with only 1 unit that is dead should return an empty squad', () => {
+    unit1.currIonic = 5;
+    unit1.maxIonic = 10;
+    unit1.currHp = 0;
+    unit1.maxHp = 10;
+    expect(GroundCombat.processCasualties (squad.slice(0, 1)).length).toEqual(0);
   });
 
-  it('the combatant should not be disabled if it has hp but no ionic, and hp is 1', () => {
-    unit.currIonic = 0;
-    unit.maxIonic = 0;
-    unit.currHp = 1;
-    unit.maxHp = 25;
-    expect(GroundCombat.checkDisabled(unit).disabled).toEqual(false);
+  it('a squad with only 1 unit that is neither disabled nor dead should the same squad not disabled', () => {
+    unit1.currIonic = 5;
+    unit1.maxIonic = 10;
+    unit1.currHp = 5;
+    unit1.maxHp = 10;
+    unit1.disabled = true;
+    expect(GroundCombat.processCasualties (squad.slice(0, 1)).length).toEqual(1);
+    expect(squad[0].currIonic).toEqual(5);
+    expect(squad[0].maxIonic).toEqual(10);
+    expect(squad[0].currHp).toEqual(5);
+    expect(squad[0].maxHp).toEqual(10);
+    expect(squad[0].disabled).toEqual(false);
+  });
+
+  it('a squad with all units dead should return an empty squad', () => {
+    unit1.currIonic = 5;
+    unit1.maxIonic = 10;
+    unit1.currHp = 0;
+    unit1.maxHp = 10;
+    unit1.disabled = false;
+
+    unit2.currIonic = 5;
+    unit2.maxIonic = 15;
+    unit2.currHp = 0;
+    unit2.maxHp = 15;
+    unit2.disabled = false;
+
+    unit3.currIonic = 5;
+    unit3.maxIonic = 20;
+    unit3.currHp = 0;
+    unit3.maxHp = 20;
+    unit3.disabled = false;
+    expect(GroundCombat.processCasualties (squad).length).toEqual(0);
+  });
+
+  it('a squad with some units dead should return the same squad without the dead units', () => {
+    unit1.currIonic = 5;
+    unit1.maxIonic = 10;
+    unit1.currHp = 5;
+    unit1.maxHp = 10;
+    unit1.disabled = false;
+
+    unit2.currIonic = 5;
+    unit2.maxIonic = 15;
+    unit2.currHp = 0;
+    unit2.maxHp = 15;
+    unit2.disabled = false;
+
+    unit3.currIonic = 5;
+    unit3.maxIonic = 20;
+    unit3.currHp = 5;
+    unit3.maxHp = 20;
+    unit3.disabled = false;
+    expect(GroundCombat.processCasualties (squad).length).toEqual(2);
+
+    expect(squad[0].currIonic).toEqual(5);
+    expect(squad[0].maxIonic).toEqual(10);
+    expect(squad[0].currHp).toEqual(5);
+    expect(squad[0].maxHp).toEqual(10);
+    expect(squad[0].disabled).toEqual(false);
+
+    expect(squad[1].currIonic).toEqual(5);
+    expect(squad[1].maxIonic).toEqual(20);
+    expect(squad[1].currHp).toEqual(5);
+    expect(squad[1].maxHp).toEqual(20);
+    expect(squad[1].disabled).toEqual(false);
+  });
+
+  it('a squad with some units dead and some disabled should return the same squad without the dead units and the disabled units disabled', () => {
+    unit1.currIonic = 0;
+    unit1.maxIonic = 10;
+    unit1.currHp = 5;
+    unit1.maxHp = 10;
+    unit1.disabled = false;
+
+    unit2.currIonic = 5;
+    unit2.maxIonic = 15;
+    unit2.currHp = 0;
+    unit2.maxHp = 15;
+    unit2.disabled = false;
+
+    unit3.currIonic = 5;
+    unit3.maxIonic = 20;
+    unit3.currHp = 5;
+    unit3.maxHp = 20;
+    unit3.disabled = true;
+    expect(GroundCombat.processCasualties (squad).length).toEqual(2);
+
+    expect(squad[0].currIonic).toEqual(0);
+    expect(squad[0].maxIonic).toEqual(10);
+    expect(squad[0].currHp).toEqual(5);
+    expect(squad[0].maxHp).toEqual(10);
+    expect(squad[0].disabled).toEqual(true);
+
+    expect(squad[1].currIonic).toEqual(5);
+    expect(squad[1].maxIonic).toEqual(20);
+    expect(squad[1].currHp).toEqual(5);
+    expect(squad[1].maxHp).toEqual(20);
+    expect(squad[1].disabled).toEqual(false);
   });
 });
 
@@ -429,66 +538,98 @@ describe('regenHP()', () => {
   it('the combatant should end with 0 HP if maxHp is 0', () => {
     unit.currHp = 0;
     unit.maxHp = 0;
+    unit.unitType = UnitType.Soft;
     expect(GroundCombat.regenHP (unit).currHp).toEqual(0);
   });
 
   it('the combatant should end with 1 HP if current HP is 1 and maxHp is 1', () => {
     unit.currHp = 1;
     unit.maxHp = 1;
+    unit.unitType = UnitType.Soft;
     expect(GroundCombat.regenHP (unit).currHp).toEqual(1);
   });
 
   it('the combatant should end with 60 HP if current HP is 50 and maxHp is 100', () => {
     unit.currHp = 50;
     unit.maxHp = 100;
+    unit.unitType = UnitType.Soft;
     expect(GroundCombat.regenHP (unit).currHp).toEqual(60);
+  });
+
+  it('the combatant should not regenerate HP if it is a droid', () => {
+    unit.currHp = 50;
+    unit.maxHp = 100;
+    unit.unitType = UnitType.Mechanical;
+    expect(GroundCombat.regenHP (unit).currHp).toEqual(50);
+  });
+
+  it('the combatant should not regenerate HP if it is a vehicle', () => {
+    unit.currHp = 50;
+    unit.maxHp = 100;
+    unit.unitType = UnitType.Vehicle;
+    expect(GroundCombat.regenHP (unit).currHp).toEqual(50);
+  });
+
+  it('the combatant should not regenerate HP if it is a facility', () => {
+    unit.currHp = 50;
+    unit.maxHp = 100;
+    unit.unitType = UnitType.Facility;
+    expect(GroundCombat.regenHP (unit).currHp).toEqual(50);
   });
 
   it('the combatant should end with 350 HP if current HP is 300 and maxHp is 500', () => {
     unit.currHp = 300;
     unit.maxHp = 500;
+    unit.unitType = UnitType.Soft;
     expect(GroundCombat.regenHP (unit).currHp).toEqual(350);
   });
 
   it('the combatant should end with 355.5 HP if current HP is 300 and maxHp is 555', () => {
     unit.currHp = 300;
     unit.maxHp = 555;
+    unit.unitType = UnitType.Soft;
     expect(GroundCombat.regenHP (unit).currHp).toEqual(355.5);
   });
 
   it('the combatant should end with 100 HP if current HP is 90 and maxHp is 100', () => {
     unit.currHp = 90;
     unit.maxHp = 100;
+    unit.unitType = UnitType.Soft;
     expect(GroundCombat.regenHP (unit).currHp).toEqual(100);
   });
 
   it('the combatant should end with 100 HP if current HP is 98 and maxHp is 100', () => {
     unit.currHp = 98;
     unit.maxHp = 100;
+    unit.unitType = UnitType.Soft;
     expect(GroundCombat.regenHP (unit).currHp).toEqual(100);
   });
 
   it('the combatant should end with 100 HP if current HP is 100 and maxHp is 100', () => {
     unit.currHp = 100;
     unit.maxHp = 100;
+    unit.unitType = UnitType.Soft;
     expect(GroundCombat.regenHP (unit).currHp).toEqual(100);
   });
 
   it('the combatant should return an error if maxHp is less than currHp', () => {
     unit.currHp = 150;
     unit.maxHp = 100;
+    unit.unitType = UnitType.Soft;
     expect(() => GroundCombat.regenHP (unit)).toThrow(new Error("Invalid value. A combatant's current HP cannot be more than the maximum HP."));
   });
 
   it('the combatant should return an error if either HP value is negative', () => {
     unit.currHp = -90;
     unit.maxHp = 100;
+    unit.unitType = UnitType.Soft;
     expect(() => GroundCombat.regenHP (unit)).toThrow(new Error("Invalid value. A combatant's HP values cannot be negative."));
   });
 
   it('the combatant should return an error if either HP value is negative', () => {
     unit.currHp = -90;
     unit.maxHp = -50;
+    unit.unitType = UnitType.Soft;
     expect(() => GroundCombat.regenHP (unit)).toThrow(new Error("Invalid value. A combatant's HP values cannot be negative."));
   });
 });

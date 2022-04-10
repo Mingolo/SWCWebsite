@@ -1,36 +1,106 @@
 import { Combatant } from "app/simulation/models/combatant.model";
 import { Weapon } from "app/simulation/models/weapon.model";
-import { DamageType, damageTypeMods, dodgeThreshold, lsWeaponSkill, Tactic, UnitType, WeaponClass } from "./ground-combat-constants";
+import { DamageType, damageTypeMods, dodgeThreshold, hpRegenInterval, ionicRegenInterval, lsWeaponSkill, shieldRegenInterval, Tactic, UnitType, WeaponClass } from "./ground-combat-constants";
 
 export class GroundCombat {
 
-  // run a complete combat round
-  public static runCombatRound (
+  // run a complete battle, return -1 if tie, or if there was a victor, return the victor
+  // if battle lasts more than 500 rounds, declare it a tie, otherwise infinite loops might happen
+  public static runBattle (
     squad1: Combatant[], squad2: Combatant[],
     s1Range: number, s2Range: number,
-    s1Tactic: Tactic, s2Tactic: Tactic) {
+    s1TacticFirst: Tactic, s1TacticSecond: Tactic, s1TacticSwitchRound: number,
+    s2TacticFirst: Tactic, s2TacticSecond: Tactic, s2TacticSwitchRound: number) {
 
-    // squad 1 attacks
-    squad1.forEach (attacker => {
-      const weapon = this.selectWeapon(attacker.primaryWeapon, attacker.secondaryWeapon, s1Range);
-      let defender = this.rollTarget(squad2, s1Tactic);
+    let s1Tactic = s1TacticFirst;
+    let s2Tactic = s2TacticFirst;
+    let battleResult = this.checkBattleResult(squad1, squad2);
+    let round = 1;
+    while (battleResult === 0 && round <= 500) {
+      // check if it's time to change tactics
+      if (round === s1TacticSwitchRound)
+        s1Tactic = s1TacticSecond;
+      if (round === s2TacticSwitchRound)
+        s2Tactic = s2TacticSecond;
+
+      // squad1 is attacker
+      this.attackRound(squad1, squad2, s1Range, s1Tactic, s2Tactic, round);
+      battleResult = this.checkBattleResult(squad1, squad2);
+      if (battleResult != 0)
+        break;
+      round++;
+      if (round > 500)
+        break;
+
+      // check if it's time to change tactics
+      if (round === s1TacticSwitchRound)
+        s1Tactic = s1TacticSecond;
+      if (round === s2TacticSwitchRound)
+        s2Tactic = s2TacticSecond;
+
+      // squad2 is attacker
+      this.attackRound(squad2, squad1, s2Range, s2Tactic, s1Tactic, round);
+      battleResult = this.checkBattleResult(squad1, squad2);
+      round++;
+    }
+
+    if (battleResult === 0)
+      battleResult = -1;
+
+    return battleResult;
+  }
+
+  // run a complete combat round
+  public static attackRound (
+    attackSquad: Combatant[], defendSquad: Combatant[], range: number,
+    attackTactic: Tactic, defendTactic: Tactic, round: number) {
+
+    // process all regeneration
+    if (round % hpRegenInterval === 0) {
+      for (let unit of attackSquad)
+        this.regenHP(unit)
+      for (let unit of defendSquad)
+        this.regenHP(unit)
+    }
+    if (round % ionicRegenInterval === 0) {
+      for (let unit of attackSquad)
+        this.regenIonic(unit)
+      for (let unit of defendSquad)
+        this.regenIonic(unit)
+    }
+    if (round % shieldRegenInterval === 0) {
+      for (let unit of attackSquad)
+        this.regenShields(unit)
+      for (let unit of defendSquad)
+        this.regenShields(unit)
+    }
+    this.processCasualties(attackSquad);
+    this.processCasualties(defendSquad);
+
+      // atttacking squad attacks
+    attackSquad.forEach (attacker => {
+      const weapon = this.selectWeapon(attacker.primaryWeapon, attacker.secondaryWeapon, range);
+      let defender = this.rollTarget(defendSquad, attackTactic);
       for (let i = 0; i < weapon.maxHits; i++) {
-        if (s1Tactic === Tactic.SpreadFire)
-          defender = this.rollTarget(squad2, s1Tactic);
-        this.calcAttackHit(attacker, defender, s1Range, weapon);
+        if (attackTactic === Tactic.SpreadFire)
+          defender = this.rollTarget(defendSquad, attackTactic);
+        this.calcAttackHit(attacker, defender, range, weapon);
       }
     })
 
-    // squad 2 attacks
-    squad2.forEach (attacker => {
-      const weapon = this.selectWeapon(attacker.primaryWeapon, attacker.secondaryWeapon, s1Range);
-      let defender = this.rollTarget(squad1, s2Tactic);
+    // defending squad attacks
+    defendSquad.forEach (attacker => {
+      const weapon = this.selectWeapon(attacker.primaryWeapon, attacker.secondaryWeapon, range);
+      let defender = this.rollTarget(attackSquad, defendTactic);
       for (let i = 0; i < weapon.maxHits; i++) {
-        if (s2Tactic === Tactic.SpreadFire)
-          defender = this.rollTarget(squad1, s2Tactic);
-        this.calcAttackHit(attacker, defender, s2Range, weapon);
+        if (defendTactic === Tactic.SpreadFire)
+          defender = this.rollTarget(attackSquad, defendTactic);
+        this.calcAttackHit(attacker, defender, range, weapon);
       }
     })
+
+    this.processCasualties(attackSquad);
+    this.processCasualties(defendSquad);
   }
 
   // calculate and process a single shot from a weapon, including calculating whether the shot hits or not
@@ -67,12 +137,12 @@ export class GroundCombat {
   // randomly select the enemy target, taking combat tactic currently active into account
   public static rollTarget (squad: Combatant[], attackTactic: Tactic) : Combatant {
     let i = this.rollRandomMinMax(0, squad.length-1);
-    const squadDisabled = this.checkSquadDisabled (squad);
+    const squadDisabled = this.checkSquadCasualties (squad);
 
     while (
       attackTactic === Tactic.SpreadFire &&
       !squadDisabled &&
-      squad[i].disabled) {
+      squad[i].maxHp > 0 && squad[i].currHp <= 0) {
         i = this.rollRandomMinMax(0, squad.length-1);
       }
 
@@ -88,8 +158,6 @@ export class GroundCombat {
 
     unit.currIonic = unit.currIonic + (unit.maxIonic * 0.1);
     unit.currIonic = unit.currIonic < unit.maxIonic ? unit.currIonic :  unit.maxIonic;
-
-    unit = this.checkDisabled(unit);
     return unit;
   }
 
@@ -111,11 +179,11 @@ export class GroundCombat {
       throw new Error("Invalid value. A combatant's HP values cannot be negative.");
     else if (unit.currHp > unit.maxHp)
       throw new Error("Invalid value. A combatant's current HP cannot be more than the maximum HP.");
+    else if (unit.unitType != UnitType.Soft)
+      return unit;
 
     unit.currHp = unit.currHp + (unit.maxHp * 0.1);
     unit.currHp = unit.currHp < unit.maxHp ? unit.currHp :  unit.maxHp;
-
-    unit = this.checkDisabled(unit);
     return unit;
   }
 
@@ -150,8 +218,8 @@ export class GroundCombat {
 
   // check if battle has ended yet, and if it has, determine result
   public static checkBattleResult (squad1: Combatant[], squad2: Combatant[]) {
-    const oneDisabled  = this.checkSquadDisabled (squad1);
-    const twoDisabled  = this.checkSquadDisabled (squad2);
+    const oneDisabled  = this.checkSquadCasualties (squad1);
+    const twoDisabled  = this.checkSquadCasualties (squad2);
 
     if (oneDisabled && twoDisabled)   // Both disabled, return -1 to indicate a tie
       return -1;
@@ -164,26 +232,27 @@ export class GroundCombat {
   }
 
   // check if all units in this squad have been killed or disabled
-  public static checkSquadDisabled (squad: Combatant[]) {
+  // units that have been killed will be deleted from the array, and thus will not show up when iterating through it
+  public static checkSquadCasualties (squad: Combatant[]) {
     return squad.reduce((prev, curr) => prev && curr.disabled, true);
   }
 
-  // process deaths in a squad by removing all dead units from squad
-  public static processDeaths (squad: Combatant[]) : Combatant[] {
-    return squad;
-  }
+  // check all units in a squad, set them to disabled if disabled, or delete from squad if dead
+  public static processCasualties (squad: Combatant[]) : Combatant[] {
 
-  // check if this unit has been killed or disabled, and modify unit to reflect this
-  public static checkDisabled (unit: Combatant) : Combatant {
-    if(unit.maxIonic > 0 && unit.currIonic <= 0) {
-      unit.disabled = true;
-    } else if (unit.maxHp > 0 && unit.currHp <= 0) {
-      unit.disabled = true
-    } else {
-      unit.disabled = false;
+    for (let i = squad.length-1; i >= 0; i--) {
+      if(squad[i].maxIonic > 0 && squad[i].currIonic <= 0) {
+        squad[i].disabled = true;
+      } else {
+        squad[i].disabled = false;
+      }
+
+      if (squad[i].maxHp > 0 && squad[i].currHp <= 0) {
+        squad.splice(i, 1);
+      }
     }
 
-    return unit;
+    return squad;
   }
 
   // calculate the maximum HP based on the given inputs

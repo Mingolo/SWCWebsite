@@ -36,6 +36,10 @@ export enum UnitType {
   Vehicle = 'Vehicle'
 }
 
+export const hpRegenInterval = 96;    // hp regen every 24 hours, there are 48 30 minute blocks in 24 hours, and every single of those 48 blocks there are 2 rounds of combat (each squad attacks separately), so 48 * 2 = 96 combat rounds in between each regen
+export const ionicRegenInterval = 96;
+export const shieldRegenInterval = 4;
+
 export const chartXAxis = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21"];
 
 export const statsForm = {
