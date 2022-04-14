@@ -1,8 +1,105 @@
 import { Combatant } from "app/simulation/models/combatant.model";
+import { InfantrySimulation } from "app/simulation/models/infantry-simulation.model";
 import { Weapon } from "app/simulation/models/weapon.model";
-import { DamageType, damageTypeMods, dodgeThreshold, hpRegenInterval, ionicRegenInterval, lsWeaponSkill, shieldRegenInterval, Tactic, UnitType, WeaponClass } from "./ground-combat-constants";
+import {
+  DamageType,
+  damageTypeMods,
+  dodgeThreshold,
+  hpRegenInterval,
+  ionicRegenInterval,
+  lsWeaponSkill,
+  shieldRegenInterval,
+  Tactic, UnitType,
+  WeaponClass } from "./ground-combat-constants";
 
 export class GroundCombat {
+
+  // run a complete simulation, write result to given "simulation" object
+  public static runSimulation (
+    simulation: InfantrySimulation,
+    blueSquad: Combatant[], redSquad: Combatant[],
+    blueRange: number, redRange: number,
+    blueTacticFirst: Tactic, blueTacticSecond: Tactic, blueTacticSwitchRound: number,
+    redTacticFirst: Tactic, redTacticSecond: Tactic, redTacticSwitchRound: number) {
+
+      simulation.ties = 0;
+      let doneBattles = 0;
+      simulation.blueTeam.victories = 0;
+      simulation.redTeam.victories = 0;
+      let blueUnitsL : number = 0;
+      let redUnitsL : number = 0;
+      let blueRoundsT : number = 0;
+      let redRoundsT : number = 0;
+      let blueHP : number = 0;
+      let redHP : number = 0;
+      let blueShields : number = 0;
+      let redShields : number = 0;
+      let blueIonic : number = 0;
+      let redIonic : number = 0;
+
+      // run battles
+      for (doneBattles = 0; doneBattles < simulation.battles; doneBattles++) {
+        const battleResult = this.runBattle(
+          blueSquad, redSquad, blueRange, redRange,
+          blueTacticFirst, blueTacticSecond, blueTacticSwitchRound,
+          redTacticFirst, redTacticSecond, redTacticSwitchRound);
+
+        if (battleResult.winner == -1) {
+          simulation.ties++;
+        } else if (battleResult.winner == blueSquad) {
+          simulation.blueTeam.victories++;
+          blueUnitsL += blueSquad.length;
+          blueRoundsT += battleResult.rounds;
+          const avgHP = blueSquad.reduce((prev, curr) => prev + curr.currHp, 0) / blueSquad.length;
+          blueHP += avgHP;
+          const avgShields = blueSquad.reduce((prev, curr) => prev + curr.currShields, 0) / blueSquad.length;
+          blueShields += avgShields;
+          const avgIonic = blueSquad.reduce((prev, curr) => prev + curr.currIonic, 0) / blueSquad.length;
+          blueIonic += avgIonic;
+        } else if (battleResult.winner == redSquad) {
+          simulation.redTeam.victories++;
+          redUnitsL += redSquad.length;
+          redRoundsT += battleResult.rounds;
+          const avgHP = redSquad.reduce((prev, curr) => prev + curr.currHp, 0) / redSquad.length;
+          redHP += avgHP;
+          const avgShields = redSquad.reduce((prev, curr) => prev + curr.currShields, 0) / redSquad.length;
+          redShields += avgShields;
+          const avgIonic = redSquad.reduce((prev, curr) => prev + curr.currIonic, 0) / redSquad.length;
+          redIonic += avgIonic;
+        }
+      }
+
+      // write results
+      simulation.battles = doneBattles;
+      simulation.blueTeam.percentage = Math.round(simulation.blueTeam.victories / doneBattles * 100);
+      simulation.redTeam.percentage = Math.round(simulation.redTeam.victories / doneBattles * 100);
+
+      if (simulation.blueTeam.victories > 0) {
+        simulation.blueTeam.unitsLeft = blueUnitsL / simulation.blueTeam.victories;
+        simulation.blueTeam.roundsTaken = blueRoundsT / simulation.blueTeam.victories;
+        simulation.blueTeam.hpLeft = blueHP / simulation.blueTeam.victories;
+        simulation.blueTeam.shieldsLeft = blueShields / simulation.blueTeam.victories;
+        simulation.blueTeam.ionicLeft = blueIonic / simulation.blueTeam.victories;
+      }
+
+      if (simulation.redTeam.victories > 0) {
+        simulation.redTeam.unitsLeft = redUnitsL / simulation.redTeam.victories;
+        simulation.redTeam.roundsTaken = redRoundsT / simulation.redTeam.victories;
+        simulation.redTeam.hpLeft = redHP / simulation.redTeam.victories;
+        simulation.redTeam.shieldsLeft = redShields / simulation.redTeam.victories;
+        simulation.redTeam.ionicLeft = redIonic / simulation.redTeam.victories;
+      }
+
+  }
+
+  // get the average of an array of numbers
+  public static getArrayAverage (array: number[]) {
+    if (array.length <= 0) {
+      throw new Error("Array cannot be empty.");
+    }
+
+    return array.reduce((prev, curr) => prev + curr, 0) / array.length;
+  }
 
   // run a complete battle, return -1 if tie, or if there was a victor, return the victor
   // if battle lasts more than 500 rounds, declare it a tie, otherwise infinite loops might happen
@@ -10,7 +107,7 @@ export class GroundCombat {
     squad1: Combatant[], squad2: Combatant[],
     s1Range: number, s2Range: number,
     s1TacticFirst: Tactic, s1TacticSecond: Tactic, s1TacticSwitchRound: number,
-    s2TacticFirst: Tactic, s2TacticSecond: Tactic, s2TacticSwitchRound: number) {
+    s2TacticFirst: Tactic, s2TacticSecond: Tactic, s2TacticSwitchRound: number) : BattleResult {
 
     let s1Tactic = s1TacticFirst;
     let s2Tactic = s2TacticFirst;
@@ -44,10 +141,10 @@ export class GroundCombat {
       round++;
     }
 
-    if (battleResult === 0)
+    if (battleResult === 0 && round > 500)
       battleResult = -1;
 
-    return battleResult;
+    return new BattleResult(battleResult, round);
   }
 
   // run a complete combat round
@@ -434,5 +531,12 @@ export class GroundCombat {
         weaponSkill = hwSkill;
 
       return weaponSkill;
+  }
+}
+
+export class BattleResult {
+
+  constructor (public winner: any = -1, public rounds: number = 0) {
+
   }
 }

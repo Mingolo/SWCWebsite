@@ -3,6 +3,7 @@ import { Component, OnInit,NgZone } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { chartXAxis, DamageType, statsForm, Tactic, WeaponClass } from '@shared/utils/ground-combat-constants';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { InfantrySquadResult } from '../models/infantry-squad-result.model';
 
 enum damage {
   Lightsaber="Lightsaber",
@@ -28,8 +29,8 @@ export class InfantryPageComponent implements OnInit {
   public fakeVar: any = null;
   public blueForm: FormGroup = this.fb.group({});
   public redForm: FormGroup = this.fb.group({});
-  public blueResult: SquadResult = new SquadResult();
-  public redResult: SquadResult = new SquadResult();
+  public blueResult: InfantrySquadResult = new InfantrySquadResult();
+  public redResult: InfantrySquadResult = new InfantrySquadResult();
 
   public chartSettings = {
     series: [
@@ -137,14 +138,4 @@ export class InfantryPageComponent implements OnInit {
     this.damageRangeChart?.render();
   }
 
-}
-
-export class SquadResult {
-  public victories: number = 0;
-  public percentage: number = 0;
-  public unitsLeft: number = 0;
-  public roundsTaken: number = 0;
-  public hpLeft: number = 0;
-  public shieldsLeft: number = 0;
-  public ionicLeft: number = 0;
 }

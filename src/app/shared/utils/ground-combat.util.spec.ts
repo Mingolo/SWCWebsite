@@ -6,6 +6,29 @@ import { DamageType, UnitType, WeaponClass } from './ground-combat-constants';
 import { GroundCombat } from './ground-combat.util';
 
 
+describe('getArrayAverage()', () => {
+
+  it('should return an error is the input array is empty', () => {
+    let array : number[] = [];
+    expect(() => GroundCombat.getArrayAverage(array)).toThrow(new Error("Array cannot be empty."));
+  });
+
+  it('should return the number at index 0 if there is only one number in the array', () => {
+    let array : number[] = [3];
+    expect(GroundCombat.getArrayAverage(array)).toEqual(3);
+  });
+
+  it('should return the average of the numbers in the array', () => {
+    let array : number[] = [3, 8, 9, 7];
+    expect(GroundCombat.getArrayAverage(array)).toEqual(6.75);
+  });
+
+  it('should return the average of the numbers in the , even with very large numbers', () => {
+    let array : number[] = [333333, 8235425, 923452, 72425];
+    expect(GroundCombat.getArrayAverage(array)).toEqual(2391158.75);
+  });
+});
+
 describe('selectWeapon()', () => {
   let weapon1: Weapon;
   let weapon2: Weapon;
