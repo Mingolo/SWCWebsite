@@ -14,6 +14,45 @@ import {
 
 export class GroundCombat {
 
+  // create a squad of Combatants, that is an array of Combatant objects, using the inputs provided
+  public static createSquad(
+    squadSize: number, strength: number, dex: number,
+    dodge: number, pwSkill: number, npwSkill: number, hwSkill: number,
+    lightSkill: number, force: boolean, isDroid: boolean,
+    hp: number, deflectors: number, ionic: number,
+    level: number, hpMult: number, armor: number,
+    primaryClass: WeaponClass, primaryType: DamageType, primaryDualWield: boolean,
+    primaryFirepower: number, primaryMinDamage: number, primaryMaxDamage: number,
+    primaryOptRange: number, primaryDropOff: number, primaryMaxHits: number,
+    secondaryClass: WeaponClass, secondaryType: DamageType, secondaryDualWield: boolean,
+    secondaryFirepower: number, secondaryMinDamage: number, secondaryMaxDamage: number,
+    secondaryOptRange: number, secondaryDropOff: number, secondaryMaxHits: number) : Combatant[] {
+
+      let squad: Combatant[] = [];
+      const health = (hp && hp > 0) ? hp : this.calculateHP(strength, hpMult, level);
+      let unitType = isDroid ? UnitType.Mechanical : UnitType.Soft;
+
+      for (let i = 0; i < squadSize; i++) {
+        let primaryWeapon = new Weapon(
+          primaryClass, primaryType, primaryFirepower,
+          primaryMinDamage, primaryMaxDamage, primaryOptRange,
+          primaryDropOff, primaryMaxHits, primaryDualWield);
+        let secondaryWeapon = new Weapon(
+          secondaryClass, secondaryType, secondaryFirepower,
+          secondaryMinDamage, secondaryMaxDamage, secondaryOptRange,
+          secondaryDropOff, secondaryMaxHits, secondaryDualWield);
+        let unit = new Combatant(
+          strength, dex, dodge, pwSkill, npwSkill, hwSkill,
+          lightSkill, force, unitType, health, health, deflectors,
+          deflectors, ionic, ionic, armor, primaryWeapon, secondaryWeapon,
+          false);
+
+          squad.push(unit);
+      }
+
+      return squad;
+  }
+
   // run a complete simulation, write result to given "simulation" object
   public static runSimulation (
     simulation: InfantrySimulation,
