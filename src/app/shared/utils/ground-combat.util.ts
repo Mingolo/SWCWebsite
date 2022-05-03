@@ -1,5 +1,6 @@
 import { Combatant } from "app/simulation/models/combatant.model";
 import { InfantrySimulation } from "app/simulation/models/infantry-simulation.model";
+import { SquadStats } from "app/simulation/models/squad-stats.model";
 import { Weapon } from "app/simulation/models/weapon.model";
 import {
   DamageType,
@@ -56,7 +57,8 @@ export class GroundCombat {
   // run a complete simulation, write result to given "simulation" object
   public static runSimulation (
     simulation: InfantrySimulation,
-    blueSquad: Combatant[], redSquad: Combatant[],
+    blueName: string, redName: string,
+    blueStats: SquadStats, redStats: SquadStats,
     blueRange: number, redRange: number,
     blueTacticFirst: Tactic, blueTacticSecond: Tactic, blueTacticSwitchRound: number,
     redTacticFirst: Tactic, redTacticSecond: Tactic, redTacticSwitchRound: number) {
@@ -65,6 +67,16 @@ export class GroundCombat {
       let doneBattles = 0;
       simulation.blueTeam.victories = 0;
       simulation.redTeam.victories = 0;
+      simulation.blueTeam.squadName = blueName;
+      simulation.redTeam.squadName = redName;
+      simulation.blueTeam.totalUnits = blueStats.squadSize;
+      simulation.blueTeam.maxHP = (blueStats.hp && blueStats.hp > 0) ? blueStats.hp : this.calculateHP(blueStats.strength, blueStats.hpMult, blueStats.level);
+      simulation.blueTeam.maxShields = blueStats.deflectors;
+      simulation.blueTeam.maxIonic = blueStats.ionic;
+      simulation.redTeam.totalUnits = redStats.squadSize;
+      simulation.redTeam.maxHP = (redStats.hp && redStats.hp > 0) ? redStats.hp : this.calculateHP(redStats.strength, redStats.hpMult, redStats.level);
+      simulation.redTeam.maxShields = redStats.deflectors;
+      simulation.redTeam.maxIonic = redStats.ionic;
       let blueUnitsL : number = 0;
       let redUnitsL : number = 0;
       let blueRoundsT : number = 0;
@@ -78,6 +90,30 @@ export class GroundCombat {
 
       // run battles
       for (doneBattles = 0; doneBattles < simulation.battles; doneBattles++) {
+        const blueSquad = GroundCombat.createSquad(
+          blueStats.squadSize, blueStats.strength, blueStats.dex,
+          blueStats.dodge, blueStats.pwSkill, blueStats.npwSkill, 0,
+          blueStats.lightSkill, blueStats.force, blueStats.isDroid,
+          blueStats.hp, blueStats.deflectors, blueStats.ionic,
+          blueStats.level, blueStats.hpMult, blueStats.armor,
+          blueStats.primaryClass, blueStats.primaryType, blueStats.primaryDualWield,
+          blueStats.primaryFirepower, blueStats.primaryMinDamage, blueStats.primaryMaxDamage,
+          blueStats.primaryOptRange, blueStats.primaryDropOff, blueStats.primaryMaxHits,
+          blueStats.secondaryClass, blueStats.secondaryType, blueStats.secondaryDualWield,
+          blueStats.secondaryFirepower, blueStats.secondaryMinDamage, blueStats.secondaryMaxDamage,
+          blueStats.secondaryOptRange, blueStats.secondaryDropOff, blueStats.secondaryMaxHits);
+        const redSquad = GroundCombat.createSquad(
+          redStats.squadSize, redStats.strength, redStats.dex,
+          redStats.dodge, redStats.pwSkill, redStats.npwSkill, 0,
+          redStats.lightSkill, redStats.force, redStats.isDroid,
+          redStats.hp, redStats.deflectors, redStats.ionic,
+          redStats.level, redStats.hpMult, redStats.armor,
+          redStats.primaryClass, redStats.primaryType, redStats.primaryDualWield,
+          redStats.primaryFirepower, redStats.primaryMinDamage, redStats.primaryMaxDamage,
+          redStats.primaryOptRange, redStats.primaryDropOff, redStats.primaryMaxHits,
+          redStats.secondaryClass, redStats.secondaryType, redStats.secondaryDualWield,
+          redStats.secondaryFirepower, redStats.secondaryMinDamage, redStats.secondaryMaxDamage,
+          redStats.secondaryOptRange, redStats.secondaryDropOff, redStats.secondaryMaxHits);
         const battleResult = this.runBattle(
           blueSquad, redSquad, blueRange, redRange,
           blueTacticFirst, blueTacticSecond, blueTacticSwitchRound,
@@ -110,25 +146,24 @@ export class GroundCombat {
 
       // write results
       simulation.battles = doneBattles;
-      simulation.blueTeam.percentage = Math.round(simulation.blueTeam.victories / doneBattles * 100);
-      simulation.redTeam.percentage = Math.round(simulation.redTeam.victories / doneBattles * 100);
+      simulation.blueTeam.percentage = this.roundTo((simulation.blueTeam.victories / doneBattles * 100), 1);
+      simulation.redTeam.percentage = this.roundTo((simulation.redTeam.victories / doneBattles * 100), 1);
 
       if (simulation.blueTeam.victories > 0) {
-        simulation.blueTeam.unitsLeft = blueUnitsL / simulation.blueTeam.victories;
-        simulation.blueTeam.roundsTaken = blueRoundsT / simulation.blueTeam.victories;
-        simulation.blueTeam.hpLeft = blueHP / simulation.blueTeam.victories;
-        simulation.blueTeam.shieldsLeft = blueShields / simulation.blueTeam.victories;
-        simulation.blueTeam.ionicLeft = blueIonic / simulation.blueTeam.victories;
+        simulation.blueTeam.unitsLeft = this.roundTo((blueUnitsL / simulation.blueTeam.victories), 1);
+        simulation.blueTeam.roundsTaken = this.roundTo((blueRoundsT / simulation.blueTeam.victories), 1);
+        simulation.blueTeam.hpLeft = this.roundTo((blueHP / simulation.blueTeam.victories), 1);
+        simulation.blueTeam.shieldsLeft = this.roundTo((blueShields / simulation.blueTeam.victories), 1);
+        simulation.blueTeam.ionicLeft = this.roundTo((blueIonic / simulation.blueTeam.victories), 1);
       }
 
       if (simulation.redTeam.victories > 0) {
-        simulation.redTeam.unitsLeft = redUnitsL / simulation.redTeam.victories;
-        simulation.redTeam.roundsTaken = redRoundsT / simulation.redTeam.victories;
-        simulation.redTeam.hpLeft = redHP / simulation.redTeam.victories;
-        simulation.redTeam.shieldsLeft = redShields / simulation.redTeam.victories;
-        simulation.redTeam.ionicLeft = redIonic / simulation.redTeam.victories;
+        simulation.redTeam.unitsLeft = this.roundTo((redUnitsL / simulation.redTeam.victories), 1);
+        simulation.redTeam.roundsTaken = this.roundTo((redRoundsT / simulation.redTeam.victories), 1);
+        simulation.redTeam.hpLeft = this.roundTo((redHP / simulation.redTeam.victories), 1);
+        simulation.redTeam.shieldsLeft = this.roundTo((redShields / simulation.redTeam.victories), 1);
+        simulation.redTeam.ionicLeft = this.roundTo((redIonic / simulation.redTeam.victories), 1);
       }
-
   }
 
   // get the average of an array of numbers
@@ -138,6 +173,12 @@ export class GroundCombat {
     }
 
     return array.reduce((prev, curr) => prev + curr, 0) / array.length;
+  }
+
+  // round to the given number of decimals
+  public static roundTo(num: number, decimals: number) : number {
+    num = +num.toFixed(decimals);
+    return num;
   }
 
   // run a complete battle, return -1 if tie, or if there was a victor, return the victor
@@ -213,25 +254,43 @@ export class GroundCombat {
     this.processCasualties(attackSquad);
     this.processCasualties(defendSquad);
 
-      // atttacking squad attacks
+    // atttacking squad attacks
     attackSquad.forEach (attacker => {
-      const weapon = this.selectWeapon(attacker.primaryWeapon, attacker.secondaryWeapon, range);
+      let weapon = this.selectWeapon(attacker.primaryWeapon, attacker.secondaryWeapon, range);
       let defender = this.rollTarget(defendSquad, attackTactic);
       for (let i = 0; i < weapon.maxHits; i++) {
         if (attackTactic === Tactic.SpreadFire)
           defender = this.rollTarget(defendSquad, attackTactic);
         this.calcAttackHit(attacker, defender, range, weapon);
       }
+      // add damage from dual wielding
+      if (attacker.secondaryWeapon.dualWielded) {
+        weapon = attacker.secondaryWeapon;
+        for (let i = 0; i < weapon.maxHits; i++) {
+          if (attackTactic === Tactic.SpreadFire)
+            defender = this.rollTarget(defendSquad, attackTactic);
+          this.calcAttackHit(attacker, defender, range, weapon);
+        }
+      }
     })
 
     // defending squad attacks
     defendSquad.forEach (attacker => {
-      const weapon = this.selectWeapon(attacker.primaryWeapon, attacker.secondaryWeapon, range);
+      let weapon = this.selectWeapon(attacker.primaryWeapon, attacker.secondaryWeapon, range);
       let defender = this.rollTarget(attackSquad, defendTactic);
       for (let i = 0; i < weapon.maxHits; i++) {
         if (defendTactic === Tactic.SpreadFire)
           defender = this.rollTarget(attackSquad, defendTactic);
         this.calcAttackHit(attacker, defender, range, weapon);
+      }
+      // add damage from dual wielding
+      if (attacker.secondaryWeapon.dualWielded) {
+        weapon = attacker.secondaryWeapon;
+        for (let i = 0; i < weapon.maxHits; i++) {
+          if (defendTactic === Tactic.SpreadFire)
+            defender = this.rollTarget(attackSquad, defendTactic);
+          this.calcAttackHit(attacker, defender, range, weapon);
+        }
       }
     })
 
@@ -275,10 +334,7 @@ export class GroundCombat {
     let i = this.rollRandomMinMax(0, squad.length-1);
     const squadDisabled = this.checkSquadCasualties (squad);
 
-    while (
-      attackTactic === Tactic.SpreadFire &&
-      !squadDisabled &&
-      squad[i].maxHp > 0 && squad[i].currHp <= 0) {
+    while (attackTactic === Tactic.SpreadFire && !squadDisabled && squad[i].maxHp > 0 && squad[i].currHp <= 0) {
         i = this.rollRandomMinMax(0, squad.length-1);
       }
 
@@ -368,9 +424,8 @@ export class GroundCombat {
   }
 
   // check if all units in this squad have been killed or disabled
-  // units that have been killed will be deleted from the array, and thus will not show up when iterating through it
   public static checkSquadCasualties (squad: Combatant[]) {
-    return squad.reduce((prev, curr) => prev && curr.disabled, true);
+    return squad.reduce((prev, curr) => prev && (curr.disabled || (curr.maxHp > 0 && curr.currHp <= 0)), true);
   }
 
   // check all units in a squad, set them to disabled if disabled, or delete from squad if dead

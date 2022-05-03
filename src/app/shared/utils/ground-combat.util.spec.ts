@@ -205,13 +205,32 @@ describe('checkSquadCasualties()', () => {
   let unit1: Combatant;
   let unit2: Combatant;
   let unit3: Combatant;
+  let unit4: Combatant;
+  let unit5: Combatant;
   let squad : Combatant[];
 
   beforeEach(() => {
     unit1 = MockService(Combatant);
     unit2 = MockService(Combatant);
     unit3 = MockService(Combatant);
-    squad = [unit1, unit2, unit3];
+    unit4 = MockService(Combatant);
+    unit5 = MockService(Combatant);
+    unit1.disabled = false;
+    unit2.disabled = false;
+    unit3.disabled = false;
+    unit4.disabled = false;
+    unit5.disabled = false;
+    unit1.maxHp = 100;
+    unit1.currHp = 50;
+    unit2.maxHp = 100;
+    unit2.currHp = 50;
+    unit3.maxHp = 100;
+    unit3.currHp = 50;
+    unit4.maxHp = 100;
+    unit4.currHp = 50;
+    unit5.maxHp = 100;
+    unit5.currHp = 50;
+    squad = [unit1, unit2, unit3, unit4, unit5];
   });
 
   it('should return true if there are no units in the squad', () => {
@@ -222,21 +241,47 @@ describe('checkSquadCasualties()', () => {
     unit1.disabled = true;
     unit2.disabled = true;
     unit3.disabled = true;
+    unit4.disabled = true;
+    unit5.disabled = true;
     expect(GroundCombat.checkSquadCasualties(squad)).toEqual(true);
   });
 
   it('should return false if at least one unit is not disabled', () => {
     unit1.disabled = true;
     unit2.disabled = true;
-    unit3.disabled = false;
+    unit4.disabled = true;
+    unit5.disabled = true;
     expect(GroundCombat.checkSquadCasualties(squad)).toEqual(false);
   });
 
-  it('should return false if no units are disabled', () => {
-    unit1.disabled = false;
-    unit2.disabled = false;
-    unit3.disabled = false;
+  it('should return false if no units are disabled or dead', () => {
     expect(GroundCombat.checkSquadCasualties(squad)).toEqual(false);
+  });
+
+  it('should return true if all units are dead', () => {
+    unit1.currHp = 0;
+    unit2.currHp = 0;
+    unit3.currHp = 0;
+    unit4.currHp = 0;
+    unit5.currHp = 0;
+    expect(GroundCombat.checkSquadCasualties(squad)).toEqual(true);
+  });
+
+  it('should return false if at least one unit is not dead', () => {
+    unit1.currHp = 0;
+    unit2.currHp = 0;
+    unit3.currHp = 0;
+    unit4.currHp = 0;
+    expect(GroundCombat.checkSquadCasualties(squad)).toEqual(false);
+  });
+
+  it('should return true if all units are dead or disabled', () => {
+    unit1.currHp = 0;
+    unit2.disabled = true;
+    unit3.disabled = true;
+    unit4.currHp = 0;
+    unit5.currHp = 0;
+    expect(GroundCombat.checkSquadCasualties(squad)).toEqual(true);
   });
 });
 
