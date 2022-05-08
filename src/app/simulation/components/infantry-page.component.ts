@@ -23,7 +23,7 @@ export class InfantryPageComponent implements OnInit, AfterViewInit {
   private blueTeamColor = "#3f51b5";
   private redTeamColor = "#4caf50";
   private contentColor = "#FFFFFF";
-  private defaultBattleNum = 10000;
+  private defaultBattleNum = 1000;
   public tactics = Tactic;
   public weaponClasses = WeaponClass;
   public damageTypes = DamageType;
@@ -213,7 +213,11 @@ export class InfantryPageComponent implements OnInit, AfterViewInit {
 
   public simulationTrigger() {
     this.spinnerService.show();
-    setTimeout(() => this.runSimAndSpinner(), 0);
+    if(window.navigator.userAgent.toLowerCase().indexOf('chrome') > -1 && !!(<any>window).chrome) {
+      setTimeout(() => this.runSimAndSpinner(), 0);
+    } else {
+      setTimeout(() => this.runSimAndSpinner(), 500);
+    }
   }
 
   private runSimAndSpinner() {

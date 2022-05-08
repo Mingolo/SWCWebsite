@@ -2,18 +2,18 @@ runtime: python27
 api_version: 1
 threadsafe: true
 handlers:
-  - url: /
+  - url: /(.*\.(gif|png|jpg|css|js|json|woff2|ico)(|\.map))$
+    static_files: dist/SimFrontEnd/\1
+    upload: dist/(.*)(|\.map)
+  - url: /(.*)
     static_files: dist/SimFrontEnd/index.html
     upload: dist/SimFrontEnd/index.html
-  - url: /
-    static_dir: dist/SimFrontEnd
 skip_files:
   - e2e/
   - node_modules/
   - src/
   - coverage
   - ^(.*/)?\..*$
-  - ^(.*/)?.*\.json$
   - ^(.*/)?.*\.md$
   - ^(.*/)?.*\.yaml$
   - ^LICENSE
