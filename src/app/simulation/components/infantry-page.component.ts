@@ -1,46 +1,48 @@
 import { DataSource } from '@angular/cdk/table';
-import { Component, OnInit,NgZone } from '@angular/core';
+import { Component, OnInit,NgZone, SimpleChanges, AfterViewInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { chartXAxis, DamageType, statsForm, Tactic, WeaponClass } from '@shared/utils/ground-combat-constants';
+import { LoadingPageSpinnerService } from '@shared/services/loading-page-spinner.service';
+import { blueSquadForm, chartXAxis, DamageType, redSquadForm, Tactic, UnitType, WeaponClass } from '@shared/utils/ground-combat-constants';
+import { GroundCombat } from '@shared/utils/ground-combat.util';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { InfantrySimulation } from '../models/infantry-simulation.model';
 import { InfantrySquadResult } from '../models/infantry-squad-result.model';
+import { SquadStats } from '../models/squad-stats.model';
+import { Weapon } from '../models/weapon.model';
 
-enum damage {
-  Lightsaber="Lightsaber",
-  Poison="Poison"
-};
 
 @Component({
   selector: 'app-infantry-page',
   templateUrl: './infantry-page.component.html',
   styleUrls: ['./infantry-page.component.scss']
 })
-export class InfantryPageComponent implements OnInit {
+export class InfantryPageComponent implements OnInit, AfterViewInit {
   public damageRangeChart: any;
 
 
   private blueTeamColor = "#3f51b5";
   private redTeamColor = "#4caf50";
   private contentColor = "#FFFFFF";
+  private defaultBattleNum = 10000;
   public tactics = Tactic;
   public weaponClasses = WeaponClass;
   public damageTypes = DamageType;
 
-  public fakeVar: any = null;
-  public blueForm: FormGroup = this.fb.group({});
-  public redForm: FormGroup = this.fb.group({});
+  public blueStats: SquadStats = new SquadStats(...blueSquadForm);
+  public redStats: SquadStats = new SquadStats(...redSquadForm);
   public blueResult: InfantrySquadResult = new InfantrySquadResult();
   public redResult: InfantrySquadResult = new InfantrySquadResult();
+  public simulation: InfantrySimulation = new InfantrySimulation(this.defaultBattleNum, this.blueResult, this.redResult, 0);
 
   public chartSettings = {
     series: [
       {
-        name: 'Blue Stormies',
-        data: [31, 40, 28, 51, 42, 89, 100],
+        name: this.blueStats.squadName,
+        data: this.getDamageGraph(this.blueStats),
       },
       {
-        name: 'Red Riflemen',
-        data: [11, 32, 45, 32, 34, 52, 41],
+        name: this.redStats.squadName,
+        data: this.getDamageGraph(this.redStats),
       },
     ],
     colors: [this.blueTeamColor, this.redTeamColor],
@@ -86,7 +88,7 @@ export class InfantryPageComponent implements OnInit {
     },
     yaxis: {
       title: {
-        text: "Average Base Damage per Hit",
+        text: "Average Base Damage per Round",
         style: {
           color: this.contentColor,
           fontWeight: "normal"
@@ -112,15 +114,11 @@ export class InfantryPageComponent implements OnInit {
     },
   }
 
-  public blueIsDroid: boolean = false;
-  public redIsDroid: boolean = false;
-
-  constructor(private fb: FormBuilder, private ngZone: NgZone) {
+  constructor(private spinnerService: LoadingPageSpinnerService, private ngZone: NgZone) {
   }
 
   ngOnInit(): void {
-    this.blueForm = this.fb.group(statsForm);
-    this.redForm = this.fb.group(statsForm);
+    this.runSimulation();
   }
 
   ngAfterViewInit() {
@@ -133,9 +131,180 @@ export class InfantryPageComponent implements OnInit {
     }
   }
 
-  initChart() {
+  private initChart() {
     this.damageRangeChart = new ApexCharts(document.querySelector('#damageRangeChart'), this.chartSettings);
     this.damageRangeChart?.render();
   }
 
+  private getDamageGraph (squad: SquadStats) : number[] {
+    let data : number[] = [];
+    let primaryWeapon = new Weapon(
+      squad.primaryClass, squad.primaryType, squad.primaryFirepower,
+      squad.primaryMinDamage, squad.primaryMaxDamage, squad.primaryOptRange,
+      squad.primaryDropOff, squad.primaryMaxHits, squad.primaryDualWield);
+    let secondaryWeapon = new Weapon(
+      squad.secondaryClass, squad.secondaryType, squad.secondaryFirepower,
+      squad.secondaryMinDamage, squad.secondaryMaxDamage, squad.secondaryOptRange,
+      squad.secondaryDropOff, squad.secondaryMaxHits, squad.secondaryDualWield);
+
+    for (let i = 0; i <= 21; i++) {
+      let primaryDamage = 0;
+      let secondaryDamage = 0;
+      const weapon = GroundCombat.selectWeapon(primaryWeapon, secondaryWeapon, i);
+      const unitType = squad.isDroid ? UnitType.Mechanical : UnitType.Soft;
+
+      // calculate average damage at this ragne
+      const hitChance = GroundCombat.getHitChance(
+        0, weapon.optRange, i,
+        weapon.dropOff, squad.dex, squad.pwSkill,
+        squad.npwSkill, 0, squad.lightSkill,
+        squad.force, weapon.weaponClass, weapon.damageType,
+        weapon.dualWielded, unitType)/100;
+      const weaponSkill = GroundCombat.getWeaponSkill(
+        squad.pwSkill, squad.npwSkill, 0,
+        squad.lightSkill, squad.force, weapon.weaponClass,
+        weapon.damageType);
+      const damageSkillMod = GroundCombat.getDamageSkillMod(weaponSkill);
+      primaryDamage = GroundCombat.getAvgBaseDamage(weaponSkill, damageSkillMod, weapon.minDamage, weapon.maxDamage) * weapon.maxHits * hitChance;
+
+      // add in dual wielding
+      if (secondaryWeapon.dualWielded) {
+        const weapon2 =  secondaryWeapon;
+        const hitChance2 = GroundCombat.getHitChance(
+          0, weapon2.optRange, i,
+          weapon2.dropOff, squad.dex, squad.pwSkill,
+          squad.npwSkill, 0, squad.lightSkill,
+          squad.force, weapon2.weaponClass, weapon2.damageType,
+          weapon2.dualWielded, unitType)/100;
+        const weaponSkill2 = GroundCombat.getWeaponSkill(
+          squad.pwSkill, squad.npwSkill, 0,
+          squad.lightSkill, squad.force, weapon2.weaponClass,
+          weapon2.damageType);
+        const damageSkillMod2 = GroundCombat.getDamageSkillMod(weaponSkill2);
+        secondaryDamage = (GroundCombat.getAvgBaseDamage(weaponSkill2, damageSkillMod2, weapon2.minDamage, weapon2.maxDamage) * 0.5) * weapon2.maxHits * hitChance2;
+      }
+
+      // calculate final avg damage and add to return array
+      data.push(Math.round(primaryDamage + secondaryDamage));
+    }
+
+    return data;
+  }
+
+  public statsToDefault() {
+    this.blueStats = new SquadStats(...blueSquadForm);
+    this.redStats = new SquadStats(...redSquadForm);
+  }
+
+  public updateChart(event: any) {
+    this.damageRangeChart.updateSeries(
+      [
+        {
+          name: this.blueStats.squadName,
+          data: this.getDamageGraph(this.blueStats),
+        },
+        {
+          name: this.redStats.squadName,
+          data: this.getDamageGraph(this.redStats),
+        },
+      ]
+    );
+  }
+
+  public simulationTrigger() {
+    this.spinnerService.show();
+    setTimeout(() => this.runSimAndSpinner(), 0);
+  }
+
+  private runSimAndSpinner() {
+    this.runSimulation();
+    this.spinnerService.hide();
+  }
+
+  private runSimulation() {
+    this.blueResult = new InfantrySquadResult();
+    this.redResult = new InfantrySquadResult();
+    this.simulation.blueTeam = this.blueResult;
+    this.simulation.redTeam = this.redResult;
+    GroundCombat.runSimulation (
+      this.simulation,
+      this.blueStats.squadName, this.redStats.squadName,
+      this.blueStats, this.redStats,
+      this.blueStats.range, this.redStats.range,
+      this.blueStats.tactic1, this.blueStats.tactic2, this.blueStats.switchRound,
+      this.redStats.tactic1, this.redStats.tactic2, this.redStats.switchRound);
+  }
+
+  public clearBlueLife() {
+    this.blueStats.hp = 0;
+    this.blueStats.hpMult = 0;
+    this.blueStats.level = 0;
+    this.blueStats.armor = 0;
+    this.blueStats.deflectors = 0;
+    this.blueStats.ionic = 0;
+    this.updateChart(null);
+  }
+
+  public clearRedLife() {
+    this.redStats.hp = 0;
+    this.redStats.hpMult = 0;
+    this.redStats.level = 0;
+    this.redStats.armor = 0;
+    this.redStats.deflectors = 0;
+    this.redStats.ionic = 0;
+    this.updateChart(null);
+  }
+
+  public copySquadSettings(target: SquadStats, source: SquadStats) {
+    target.squadSize = source.squadSize;
+    target.range = source.range;
+    target.tactic1 = source.tactic1;
+    target.tactic2 = source.tactic2;
+    target.switchRound = source.switchRound;
+    this.updateChart(null);
+  }
+
+  public copyUnitStats(target: SquadStats, source: SquadStats) {
+    target.strength = source.strength;
+    target.dex = source.dex;
+    target.dodge = source.dodge;
+    target.pwSkill = source.pwSkill;
+    target.npwSkill = source.npwSkill;
+    target.lightSkill = source.lightSkill;
+    target.force = source.force;
+    target.isDroid = source.isDroid;
+    target.hp = source.hp;
+    target.level = source.level;
+    target.hpMult = source.hpMult;
+    target.ionic = source.ionic;
+    target.deflectors = source.deflectors;
+    target.armor = source.armor;
+    this.updateChart(null);
+  }
+
+  public copyPrimaryWeapon(target: SquadStats, source: SquadStats) {
+    target.primaryClass = source.primaryClass;
+    target.primaryType = source.primaryType;
+    target.primaryFirepower = source.primaryFirepower;
+    target.primaryMinDamage = source.primaryMinDamage;
+    target.primaryMaxDamage = source.primaryMaxDamage;
+    target.primaryOptRange = source.primaryOptRange;
+    target.primaryDropOff = source.primaryDropOff;
+    target.primaryMaxHits = source.primaryMaxHits;
+    target.primaryDualWield = source.primaryDualWield;
+    this.updateChart(null);
+  }
+
+  public copySecondaryWeapon(target: SquadStats, source: SquadStats) {
+    target.secondaryClass = source.secondaryClass;
+    target.secondaryType = source.secondaryType;
+    target.secondaryFirepower = source.secondaryFirepower;
+    target.secondaryMinDamage = source.secondaryMinDamage;
+    target.secondaryMaxDamage = source.secondaryMaxDamage;
+    target.secondaryOptRange = source.secondaryOptRange;
+    target.secondaryDropOff = source.secondaryDropOff;
+    target.secondaryMaxHits = source.secondaryMaxHits;
+    target.secondaryDualWield = source.secondaryDualWield;
+    this.updateChart(null);
+  }
 }

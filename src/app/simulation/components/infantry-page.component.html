@@ -6,112 +6,112 @@
         <div fxLayout="row wrap" class="matero-row">
             <div fxFlex="100%" fxFlex.gt-sm="50%" class="matero-col">
                 <mat-card class="blue-team-background">
-                    <mat-card-title>Blue Stormies</mat-card-title>
-                    <form [formGroup]="blueForm" class="form-field-full">
+                    <mat-card-title>{{blueStats.squadName}}</mat-card-title>
+                    <form #blueForm="ngForm" class="form-field-full">
                         <div fxLayout="row wrap" class="matero-row">
                             <section fxFlex="100%" fxFlex.gt-sm="25%" class="matero-col">
                                 <h3>Squad Settings
                                     <button mat-icon-button>
-                                        <mat-icon color="accent">file_copy</mat-icon>
+                                        <mat-icon color="accent" (click)="copySquadSettings(blueStats, redStats)">file_copy</mat-icon>
                                     </button>
                                 </h3>
                                 <mat-form-field>
                                     <mat-label>Squad Name</mat-label>
-                                    <input matInput formControlName="squadName" [(ngModel)]="fakeVar" required>
+                                    <input matInput [(ngModel)]="blueStats.squadName" (ngModelChange)="updateChart($event)" name="squadName" required>
                                 </mat-form-field>
                                 <mat-form-field>
                                     <mat-label>Squad Size</mat-label>
-                                    <input matInput formControlName="squadSize" type="number" min="1" step="1" [(ngModel)]="fakeVar" required>
+                                    <input matInput type="number" min="1" step="1" [(ngModel)]="blueStats.squadSize" name="squadSize" required>
                                 </mat-form-field>
                                 <mat-form-field>
                                     <mat-label>Attack Range</mat-label>
-                                    <input matInput formControlName="range" type="number" min="0" max="21" step="1" [(ngModel)]="fakeVar" required>
+                                    <input matInput type="number" min="0" max="21" step="1" [(ngModel)]="blueStats.range" name="range" required>
                                 </mat-form-field>
                                 <mat-form-field class="w-full">
                                     <mat-label>Starting Tactic</mat-label>
-                                    <mtx-select [items]="tactics | keyvalue" bindLabel="value" bindValue="key" [(ngModel)]="fakeVar" formControlName="tactic1" required>
+                                    <mtx-select [items]="tactics | keyvalue" bindLabel="value" bindValue="value" [(ngModel)]="blueStats.tactic1" name="tactic1" required>
                                     </mtx-select>
                                 </mat-form-field>
                                 <mat-form-field class="w-full">
                                     <mat-label>Second Tactic</mat-label>
-                                    <mtx-select [items]="tactics | keyvalue" bindLabel="value" bindValue="key" [(ngModel)]="fakeVar" formControlName="tactic2" required>
+                                    <mtx-select [items]="tactics | keyvalue" bindLabel="value" bindValue="value" [(ngModel)]="blueStats.tactic2" name="tactic2" required>
                                     </mtx-select>
                                 </mat-form-field>
                                 <mat-form-field>
                                     <mat-label>Switch to 2nd tactic on round...</mat-label>
-                                    <input matInput formControlName="switchRound" type="number" min="2" step="1" [(ngModel)]="fakeVar" required>
+                                    <input matInput type="number" min="0" step="1" [(ngModel)]="blueStats.switchRound" name="switchRound" required>
                                 </mat-form-field>
                             </section>
                             <section fxFlex="100%" fxFlex.gt-sm="25%" class="matero-col">
                                 <h3>Unit Stats
                                     <button mat-icon-button>
-                                        <mat-icon color="accent">file_copy</mat-icon>
+                                        <mat-icon color="accent" (click)="copyUnitStats(blueStats, redStats)">file_copy</mat-icon>
                                     </button>
                                 </h3>
                                 <div fxLayout="row wrap" class="matero-row">
                                     <div fxFlex="50%" class="matero-col">
                                         <mat-form-field>
                                             <mat-label>Strength</mat-label>
-                                            <input matInput formControlName="strength" type="number" min="0" max="5" step="1" [(ngModel)]="fakeVar" required>
+                                            <input matInput type="number" min="0" max="5" step="1" [(ngModel)]="blueStats.strength" (ngModelChange)="updateChart($event)" name="strength" required>
                                         </mat-form-field>
                                         <mat-form-field>
                                             <mat-label>Dexterity</mat-label>
-                                            <input matInput formControlName="dex" type="number" min="0" max="5" step="1" [(ngModel)]="fakeVar" required>
+                                            <input matInput type="number" min="0" max="5" step="1" [(ngModel)]="blueStats.dex" (ngModelChange)="updateChart($event)" name="dex" required>
                                         </mat-form-field>
                                         <mat-form-field>
                                             <mat-label>Dodge</mat-label>
-                                            <input matInput formControlName="dodge" type="number" min="0" max="5" step="1" [(ngModel)]="fakeVar" required>
+                                            <input matInput type="number" min="0" max="5" step="1" [(ngModel)]="blueStats.dodge" (ngModelChange)="updateChart($event)" name="dodge" required>
                                         </mat-form-field>
                                         <mat-form-field>
                                             <mat-label>PW Skill</mat-label>
-                                            <input matInput formControlName="pwSkill" type="number" min="0" max="5" step="1" [(ngModel)]="fakeVar" required>
+                                            <input matInput type="number" min="0" max="5" step="1" [(ngModel)]="blueStats.pwSkill" (ngModelChange)="updateChart($event)" name="pwSkill" required>
                                         </mat-form-field>
                                         <mat-form-field>
                                             <mat-label>NPW Skill</mat-label>
-                                            <input matInput formControlName="npwSkill" type="number" min="0" max="5" step="1" [(ngModel)]="fakeVar" required>
+                                            <input matInput type="number" min="0" max="5" step="1" [(ngModel)]="blueStats.npwSkill" (ngModelChange)="updateChart($event)" name="npwSkill" required>
                                         </mat-form-field>
                                         <mat-form-field>
                                             <mat-label>Lightsaber</mat-label>
-                                            <input matInput formControlName="lightSkill" type="number" min="0" max="5" step="1" [(ngModel)]="fakeVar" required>
+                                            <input matInput type="number" min="0" max="5" step="1" [(ngModel)]="blueStats.lightSkill" (ngModelChange)="updateChart($event)" name="lightSkill" required>
                                         </mat-form-field>
                                     </div>
                                     <div fxFlex="50%" class="matero-col">
-                                        <mat-slide-toggle class="form-manual-spacing" formControlName="force" [(ngModel)]="fakeVar">
+                                        <mat-slide-toggle class="form-manual-spacing" [(ngModel)]="blueStats.force" (ngModelChange)="updateChart($event)" name="force">
                                             Force
                                         </mat-slide-toggle>
-                                        <mat-slide-toggle class="form-manual-spacing" formControlName="isDroid" [(ngModel)]="blueIsDroid">
+                                        <mat-slide-toggle class="form-manual-spacing" [(ngModel)]="blueStats.isDroid" (ngModelChange)="updateChart($event)" (click)="clearBlueLife()" name="isDroid">
                                             Is Droid
                                         </mat-slide-toggle>
-                                        <div *ngIf="blueIsDroid">
+                                        <div *ngIf="blueStats.isDroid">
                                             <mat-form-field>
                                                 <mat-label>Hull</mat-label>
-                                                <input matInput formControlName="hp" type="number" min="0" step="1" [(ngModel)]="fakeVar" required>
+                                                <input matInput type="number" min="1" step="1" [(ngModel)]="blueStats.hp" name="hp" required>
                                             </mat-form-field>
                                             <mat-form-field>
                                                 <mat-label>Deflectors</mat-label>
-                                                <input matInput formControlName="deflectors" type="number" min="0" step="1" [(ngModel)]="fakeVar" required>
+                                                <input matInput type="number" min="0" step="1" [(ngModel)]="blueStats.deflectors" name="deflectors" required>
                                             </mat-form-field>
                                             <mat-form-field>
                                                 <mat-label>Ionic</mat-label>
-                                                <input matInput formControlName="ionic" type="number" min="0"step="1" [(ngModel)]="fakeVar" required>
+                                                <input matInput type="number" min="0"step="1" [(ngModel)]="blueStats.ionic" name="ionic" required>
                                             </mat-form-field>
                                         </div>
-                                        <div *ngIf="!blueIsDroid">
+                                        <div *ngIf="!blueStats.isDroid">
                                             <mat-form-field>
                                               <mat-label>HP</mat-label>
-                                              <input matInput formControlName="hp" type="number" min="0" step="1" [(ngModel)]="fakeVar">
+                                              <input matInput type="number" min="0" step="1" [(ngModel)]="blueStats.hp" name="hp">
                                             </mat-form-field>
                                             <mat-form-field>
                                                 <mat-label>Level</mat-label>
-                                                <input matInput formControlName="level" type="number" min="0" step="1" [(ngModel)]="fakeVar" required>
+                                                <input matInput type="number" min="0" step="1" [(ngModel)]="blueStats.level" name="level" required>
                                             </mat-form-field>
                                             <mat-form-field>
                                                 <mat-label>HP Mult</mat-label>
-                                                <input matInput formControlName="hpMult" type="number" min="0" step="1" [(ngModel)]="fakeVar" required>
+                                                <input matInput type="number" min="0" step="0.5" [(ngModel)]="blueStats.hpMult" name="hpMult" required>
                                             </mat-form-field>
                                             <mat-form-field>
                                                 <mat-label>Armor</mat-label>
-                                                <input matInput formControlName="armor" type="number" min="0" step="1" [(ngModel)]="fakeVar" required>
+                                                <input matInput type="number" min="0" step="1" [(ngModel)]="blueStats.armor" name="armor" required>
                                             </mat-form-field>
                                         </div>
                                     </div>
@@ -120,46 +120,46 @@
                             <section fxFlex="100%" fxFlex.gt-sm="25%" class="matero-col">
                                 <h3>Primary Weapon
                                     <button mat-icon-button>
-                                        <mat-icon color="accent">file_copy</mat-icon>
+                                        <mat-icon color="accent" (click)="copyPrimaryWeapon(blueStats, redStats)">file_copy</mat-icon>
                                     </button>
                                 </h3>
                                 <mat-form-field class="w-full">
                                     <mat-label>Weapon Class</mat-label>
-                                    <mtx-select [items]="weaponClasses | keyvalue" bindLabel="value" bindValue="key" [(ngModel)]="fakeVar" formControlName="primaryClass" required>
+                                    <mtx-select [items]="weaponClasses | keyvalue" bindLabel="value" bindValue="value" [(ngModel)]="blueStats.primaryClass" (ngModelChange)="updateChart($event)" name="primaryClass" required>
                                     </mtx-select>
                                 </mat-form-field>
                                 <mat-form-field class="w-full">
                                     <mat-label>Damage Type</mat-label>
-                                    <mtx-select [items]="damageTypes | keyvalue" bindLabel="value" bindValue="key" [(ngModel)]="fakeVar" formControlName="primaryType" required>
+                                    <mtx-select [items]="damageTypes | keyvalue" bindLabel="value" bindValue="value" [(ngModel)]="blueStats.primaryType" (ngModelChange)="updateChart($event)" name="primaryType" required>
                                     </mtx-select>
                                 </mat-form-field>
                                 <div fxLayout="row wrap" class="matero-row">
                                     <div fxFlex="50%" class="matero-col">
                                         <mat-form-field>
                                             <mat-label>Firepower</mat-label>
-                                            <input matInput formControlName="primaryFirepower" type="number" min="0" step="1" [(ngModel)]="fakeVar" required>
+                                            <input matInput type="number" min="0" step="1" [(ngModel)]="blueStats.primaryFirepower" name="primaryFirepower" required>
                                         </mat-form-field>
                                         <mat-form-field>
                                             <mat-label>Min Damage</mat-label>
-                                            <input matInput formControlName="primaryMinDamage" type="number" min="0" step="1" [(ngModel)]="fakeVar" required>
+                                            <input matInput type="number" min="0" step="1" [(ngModel)]="blueStats.primaryMinDamage" (ngModelChange)="updateChart($event)" name="primaryMinDamage" required>
                                         </mat-form-field>
                                         <mat-form-field>
                                             <mat-label>Max Damage</mat-label>
-                                            <input matInput formControlName="primaryMaxDamage" type="number" min="0" step="1" [(ngModel)]="fakeVar" required>
+                                            <input matInput type="number" min="0" step="1" [(ngModel)]="blueStats.primaryMaxDamage" (ngModelChange)="updateChart($event)" name="primaryMaxDamage" required>
                                         </mat-form-field>
                                     </div>
                                     <div fxFlex="50%" class="matero-col">
                                         <mat-form-field>
                                             <mat-label>Opt. Range</mat-label>
-                                            <input matInput formControlName="primaryOptRange" type="number" min="0" step="1" [(ngModel)]="fakeVar" required>
+                                            <input matInput type="number" min="0" step="1" [(ngModel)]="blueStats.primaryOptRange" (ngModelChange)="updateChart($event)" name="primaryOptRange" required>
                                         </mat-form-field>
                                         <mat-form-field>
                                             <mat-label>Drop</mat-label>
-                                            <input matInput formControlName="primaryDropOff" type="number" min="0" step="1" [(ngModel)]="fakeVar" required>
+                                            <input matInput type="number" min="0" step="1" [(ngModel)]="blueStats.primaryDropOff" (ngModelChange)="updateChart($event)" name="primaryDropOff" required>
                                         </mat-form-field>
                                         <mat-form-field>
                                             <mat-label>Max Hits</mat-label>
-                                            <input matInput formControlName="primaryMaxHits" type="number" min="0" step="1" [(ngModel)]="fakeVar" required>
+                                            <input matInput type="number" min="0" step="1" [(ngModel)]="blueStats.primaryMaxHits" (ngModelChange)="updateChart($event)" name="primaryMaxHits" required>
                                         </mat-form-field>
                                     </div>
                                 </div>
@@ -167,49 +167,49 @@
                             <section fxFlex="100%" fxFlex.gt-sm="25%" class="matero-col">
                                 <h3>Secondary Weapon
                                     <button mat-icon-button>
-                                        <mat-icon color="accent">file_copy</mat-icon>
+                                        <mat-icon color="accent" (click)="copySecondaryWeapon(blueStats, redStats)">file_copy</mat-icon>
                                     </button>
                                 </h3>
                                 <mat-form-field class="w-full">
                                     <mat-label>Weapon Class</mat-label>
-                                    <mtx-select [items]="weaponClasses | keyvalue" bindLabel="value" bindValue="key" [(ngModel)]="fakeVar" formControlName="secondaryClass" required>
+                                    <mtx-select [items]="weaponClasses | keyvalue" bindLabel="value" bindValue="value" [(ngModel)]="blueStats.secondaryClass" (ngModelChange)="updateChart($event)" name="secondaryClass" required>
                                     </mtx-select>
                                 </mat-form-field>
                                 <mat-form-field class="w-full">
                                     <mat-label>Damage Type</mat-label>
-                                    <mtx-select [items]="damageTypes | keyvalue" bindLabel="value" bindValue="key" [(ngModel)]="fakeVar" formControlName="secondaryType" required>
+                                    <mtx-select [items]="damageTypes | keyvalue" bindLabel="value" bindValue="value" [(ngModel)]="blueStats.secondaryType" (ngModelChange)="updateChart($event)" name="secondaryType" required>
                                     </mtx-select>
                                 </mat-form-field>
-                                <mat-slide-toggle class="form-manual-spacing" formControlName="secondaryDualWield" [(ngModel)]="fakeVar">
+                                <mat-slide-toggle class="form-manual-spacing" [(ngModel)]="blueStats.secondaryDualWield" (ngModelChange)="updateChart($event)" name="secondaryDualWield">
                                   Dual Wielding - Offhand
                                 </mat-slide-toggle>
                                 <div fxLayout="row wrap" class="matero-row">
                                     <div fxFlex="50%" class="matero-col">
                                         <mat-form-field>
                                             <mat-label>Firepower</mat-label>
-                                            <input matInput formControlName="secondaryFirepower" type="number" min="0" step="1" [(ngModel)]="fakeVar" required>
+                                            <input matInput type="number" min="0" step="1" [(ngModel)]="blueStats.secondaryFirepower" name="secondaryFirepower" required>
                                         </mat-form-field>
                                         <mat-form-field>
                                             <mat-label>Min Damage</mat-label>
-                                            <input matInput formControlName="secondaryMinDamage" type="number" min="0" step="1" [(ngModel)]="fakeVar" required>
+                                            <input matInput type="number" min="0" step="1" [(ngModel)]="blueStats.secondaryMinDamage" (ngModelChange)="updateChart($event)" name="secondaryMinDamage" required>
                                         </mat-form-field>
                                         <mat-form-field>
                                             <mat-label>Max Damage</mat-label>
-                                            <input matInput formControlName="secondaryMaxDamage" type="number" min="0" step="1" [(ngModel)]="fakeVar" required>
+                                            <input matInput type="number" min="0" step="1" [(ngModel)]="blueStats.secondaryMaxDamage" (ngModelChange)="updateChart($event)" name="secondaryMaxDamage" required>
                                         </mat-form-field>
                                     </div>
                                     <div fxFlex="50%" class="matero-col">
                                         <mat-form-field>
                                             <mat-label>Opt. Range</mat-label>
-                                            <input matInput formControlName="secondaryOptRange" type="number" min="0" step="1" [(ngModel)]="fakeVar" required>
+                                            <input matInput type="number" min="0" step="1" [(ngModel)]="blueStats.secondaryOptRange" (ngModelChange)="updateChart($event)" name="secondaryOptRange" required>
                                         </mat-form-field>
                                         <mat-form-field>
                                             <mat-label>Drop</mat-label>
-                                            <input matInput formControlName="secondaryDropOff" type="number" min="0" step="1" [(ngModel)]="fakeVar" required>
+                                            <input matInput type="number" min="0" step="1" [(ngModel)]="blueStats.secondaryDropOff" (ngModelChange)="updateChart($event)" name="secondaryDropOff" required>
                                         </mat-form-field>
                                         <mat-form-field>
                                             <mat-label>Max Hits</mat-label>
-                                            <input matInput formControlName="secondaryMaxHits" type="number" min="0" step="1" [(ngModel)]="fakeVar" required>
+                                            <input matInput type="number" min="0" step="1" [(ngModel)]="blueStats.secondaryMaxHits" (ngModelChange)="updateChart($event)" name="secondaryMaxHits" required>
                                         </mat-form-field>
                                     </div>
                                 </div>
@@ -221,112 +221,112 @@
 
             <div fxFlex="100%" fxFlex.gt-sm="50%" class="matero-col">
                 <mat-card class="red-team-background">
-                    <mat-card-title>Red Riflemen</mat-card-title>
-                    <form [formGroup]="redForm" class="form-field-full">
+                    <mat-card-title>{{redStats.squadName}}</mat-card-title>
+                    <form #redForm="ngForm" class="form-field-full">
                         <div fxLayout="row wrap" class="matero-row">
                             <section fxFlex="100%" fxFlex.gt-sm="25%" class="matero-col">
                                 <h3>Squad Settings
                                     <button mat-icon-button>
-                                        <mat-icon color="accent">file_copy</mat-icon>
+                                        <mat-icon color="accent" (click)="copySquadSettings(redStats, blueStats)">file_copy</mat-icon>
                                     </button>
                                 </h3>
                                 <mat-form-field>
                                     <mat-label>Squad Name</mat-label>
-                                    <input matInput formControlName="squadName" [(ngModel)]="fakeVar" required>
+                                    <input matInput [(ngModel)]="redStats.squadName" (ngModelChange)="updateChart($event)" name="squadName" required>
                                 </mat-form-field>
                                 <mat-form-field>
                                     <mat-label>Squad Size</mat-label>
-                                    <input matInput formControlName="squadSize" type="number" min="1" step="1" [(ngModel)]="fakeVar" required>
+                                    <input matInput type="number" min="1" step="1" [(ngModel)]="redStats.squadSize" name="squadSize" required>
                                 </mat-form-field>
                                 <mat-form-field>
                                     <mat-label>Attack Range</mat-label>
-                                    <input matInput formControlName="range" type="number" min="0" max="21" step="1" [(ngModel)]="fakeVar" required>
+                                    <input matInput type="number" min="0" max="21" step="1" [(ngModel)]="redStats.range" name="range" required>
                                 </mat-form-field>
                                 <mat-form-field class="w-full">
                                     <mat-label>Starting Tactic</mat-label>
-                                    <mtx-select [items]="tactics | keyvalue" bindLabel="value" bindValue="key" [(ngModel)]="fakeVar" formControlName="tactic1" required>
+                                    <mtx-select [items]="tactics | keyvalue" bindLabel="value" bindValue="value" [(ngModel)]="redStats.tactic1" name="tactic1" required>
                                     </mtx-select>
                                 </mat-form-field>
                                 <mat-form-field class="w-full">
                                     <mat-label>Second Tactic</mat-label>
-                                    <mtx-select [items]="tactics | keyvalue" bindLabel="value" bindValue="key" [(ngModel)]="fakeVar" formControlName="tactic2" required>
+                                    <mtx-select [items]="tactics | keyvalue" bindLabel="value" bindValue="value" [(ngModel)]="redStats.tactic2" name="tactic2" required>
                                     </mtx-select>
                                 </mat-form-field>
                                 <mat-form-field>
                                     <mat-label>Switch to 2nd tactic on round...</mat-label>
-                                    <input matInput formControlName="switchRound" type="number" min="2" step="1" [(ngModel)]="fakeVar" required>
+                                    <input matInput type="number" min="0" step="1" [(ngModel)]="redStats.switchRound" name="switchRound" required>
                                 </mat-form-field>
                             </section>
                             <section fxFlex="100%" fxFlex.gt-sm="25%" class="matero-col">
                                 <h3>Unit Stats
                                     <button mat-icon-button>
-                                        <mat-icon color="accent">file_copy</mat-icon>
+                                        <mat-icon color="accent" (click)="copyUnitStats(redStats, blueStats)">file_copy</mat-icon>
                                     </button>
                                 </h3>
                                 <div fxLayout="row wrap" class="matero-row">
                                     <div fxFlex="50%" class="matero-col">
                                         <mat-form-field>
                                             <mat-label>Strength</mat-label>
-                                            <input matInput formControlName="strength" type="number" min="0" max="5" step="1" [(ngModel)]="fakeVar" required>
+                                            <input matInput type="number" min="0" max="5" step="1" [(ngModel)]="redStats.strength" (ngModelChange)="updateChart($event)" name="strength" required>
                                         </mat-form-field>
                                         <mat-form-field>
                                             <mat-label>Dexterity</mat-label>
-                                            <input matInput formControlName="dex" type="number" min="0" max="5" step="1" [(ngModel)]="fakeVar" required>
+                                            <input matInput type="number" min="0" max="5" step="1" [(ngModel)]="redStats.dex" name="dex" (ngModelChange)="updateChart($event)" required>
                                         </mat-form-field>
                                         <mat-form-field>
                                             <mat-label>Dodge</mat-label>
-                                            <input matInput formControlName="dodge" type="number" min="0" max="5" step="1" [(ngModel)]="fakeVar" required>
+                                            <input matInput type="number" min="0" max="5" step="1" [(ngModel)]="redStats.dodge" (ngModelChange)="updateChart($event)" name="dodge" required>
                                         </mat-form-field>
                                         <mat-form-field>
                                             <mat-label>PW Skill</mat-label>
-                                            <input matInput formControlName="pwSkill" type="number" min="0" max="5" step="1" [(ngModel)]="fakeVar" required>
+                                            <input matInput type="number" min="0" max="5" step="1" [(ngModel)]="redStats.pwSkill" (ngModelChange)="updateChart($event)" name="pwSkill" required>
                                         </mat-form-field>
                                         <mat-form-field>
                                             <mat-label>NPW Skill</mat-label>
-                                            <input matInput formControlName="npwSkill" type="number" min="0" max="5" step="1" [(ngModel)]="fakeVar" required>
+                                            <input matInput type="number" min="0" max="5" step="1" [(ngModel)]="redStats.npwSkill" (ngModelChange)="updateChart($event)" name="npwSkill" required>
                                         </mat-form-field>
                                         <mat-form-field>
                                             <mat-label>Lightsaber</mat-label>
-                                            <input matInput formControlName="lightSkill" type="number" min="0" max="5" step="1" [(ngModel)]="fakeVar" required>
+                                            <input matInput type="number" min="0" max="5" step="1" [(ngModel)]="redStats.lightSkill" (ngModelChange)="updateChart($event)" name="lightSkill" required>
                                         </mat-form-field>
                                     </div>
                                     <div fxFlex="50%" class="matero-col">
-                                        <mat-slide-toggle class="form-manual-spacing" formControlName="force" [(ngModel)]="fakeVar">
+                                        <mat-slide-toggle class="form-manual-spacing" [(ngModel)]="redStats.force" (ngModelChange)="updateChart($event)" name="force">
                                             Force
                                         </mat-slide-toggle>
-                                        <mat-slide-toggle class="form-manual-spacing" formControlName="isDroid" [(ngModel)]="redIsDroid">
+                                        <mat-slide-toggle class="form-manual-spacing" [(ngModel)]="redStats.isDroid" (ngModelChange)="updateChart($event)" (click)="clearRedLife()" name="isDroid">
                                             Is Droid
                                         </mat-slide-toggle>
-                                        <div *ngIf="redIsDroid">
+                                        <div *ngIf="redStats.isDroid">
                                             <mat-form-field>
                                                 <mat-label>Hull</mat-label>
-                                                <input matInput formControlName="hp" type="number" min="0" step="1" [(ngModel)]="fakeVar" required>
+                                                <input matInput type="number" min="1" step="1" [(ngModel)]="redStats.hp" name="hp" required>
                                             </mat-form-field>
                                             <mat-form-field>
                                                 <mat-label>Deflectors</mat-label>
-                                                <input matInput formControlName="deflectors" type="number" min="0" step="1" [(ngModel)]="fakeVar" required>
+                                                <input matInput type="number" min="0" step="1" [(ngModel)]="redStats.deflectors" name="deflectors" required>
                                             </mat-form-field>
                                             <mat-form-field>
                                                 <mat-label>Ionic</mat-label>
-                                                <input matInput formControlName="ionic" type="number" min="0"step="1" [(ngModel)]="fakeVar" required>
+                                                <input matInput type="number" min="0"step="1" [(ngModel)]="redStats.ionic" name="ionic" required>
                                             </mat-form-field>
                                         </div>
-                                        <div *ngIf="!redIsDroid">
+                                        <div *ngIf="!redStats.isDroid">
                                             <mat-form-field>
                                               <mat-label>HP</mat-label>
-                                              <input matInput formControlName="hp" type="number" min="0" step="1" [(ngModel)]="fakeVar">
+                                              <input matInput type="number" min="0" step="1" [(ngModel)]="redStats.hp" name="hp">
                                             </mat-form-field>
                                             <mat-form-field>
                                                 <mat-label>Level</mat-label>
-                                                <input matInput formControlName="level" type="number" min="0" step="1" [(ngModel)]="fakeVar" required>
+                                                <input matInput type="number" min="0" step="1" [(ngModel)]="redStats.level" name="level" required>
                                             </mat-form-field>
                                             <mat-form-field>
                                                 <mat-label>HP Mult</mat-label>
-                                                <input matInput formControlName="hpMult" type="number" min="0" step="1" [(ngModel)]="fakeVar" required>
+                                                <input matInput type="number" min="0" step="0.5" [(ngModel)]="redStats.hpMult" name="hpMult" required>
                                             </mat-form-field>
                                             <mat-form-field>
                                                 <mat-label>Armor</mat-label>
-                                                <input matInput formControlName="armor" type="number" min="0" step="1" [(ngModel)]="fakeVar" required>
+                                                <input matInput type="number" min="0" step="1" [(ngModel)]="redStats.armor" name="armor" required>
                                             </mat-form-field>
                                         </div>
                                     </div>
@@ -335,46 +335,46 @@
                             <section fxFlex="100%" fxFlex.gt-sm="25%" class="matero-col">
                                 <h3>Primary Weapon
                                     <button mat-icon-button>
-                                        <mat-icon color="accent">file_copy</mat-icon>
+                                        <mat-icon color="accent" (click)="copyPrimaryWeapon(redStats, blueStats)">file_copy</mat-icon>
                                     </button>
                                 </h3>
                                 <mat-form-field class="w-full">
                                     <mat-label>Weapon Class</mat-label>
-                                    <mtx-select [items]="weaponClasses | keyvalue" bindLabel="value" bindValue="key" [(ngModel)]="fakeVar" formControlName="primaryClass" required>
+                                    <mtx-select [items]="weaponClasses | keyvalue" bindLabel="value" bindValue="value" [(ngModel)]="redStats.primaryClass" (ngModelChange)="updateChart($event)" name="primaryClass" required>
                                     </mtx-select>
                                 </mat-form-field>
                                 <mat-form-field class="w-full">
                                     <mat-label>Damage Type</mat-label>
-                                    <mtx-select [items]="damageTypes | keyvalue" bindLabel="value" bindValue="key" [(ngModel)]="fakeVar" formControlName="primaryType" required>
+                                    <mtx-select [items]="damageTypes | keyvalue" bindLabel="value" bindValue="value" [(ngModel)]="redStats.primaryType" (ngModelChange)="updateChart($event)" name="primaryType" required>
                                     </mtx-select>
                                 </mat-form-field>
                                 <div fxLayout="row wrap" class="matero-row">
                                     <div fxFlex="50%" class="matero-col">
                                         <mat-form-field>
                                             <mat-label>Firepower</mat-label>
-                                            <input matInput formControlName="primaryFirepower" type="number" min="0" step="1" [(ngModel)]="fakeVar" required>
+                                            <input matInput type="number" min="0" step="1" [(ngModel)]="redStats.primaryFirepower" name="primaryFirepower" required>
                                         </mat-form-field>
                                         <mat-form-field>
                                             <mat-label>Min Damage</mat-label>
-                                            <input matInput formControlName="primaryMinDamage" type="number" min="0" step="1" [(ngModel)]="fakeVar" required>
+                                            <input matInput type="number" min="0" step="1" [(ngModel)]="redStats.primaryMinDamage" (ngModelChange)="updateChart($event)" name="primaryMinDamage" required>
                                         </mat-form-field>
                                         <mat-form-field>
                                             <mat-label>Max Damage</mat-label>
-                                            <input matInput formControlName="primaryMaxDamage" type="number" min="0" step="1" [(ngModel)]="fakeVar" required>
+                                            <input matInput type="number" min="0" step="1" [(ngModel)]="redStats.primaryMaxDamage" (ngModelChange)="updateChart($event)" name="primaryMaxDamage" required>
                                         </mat-form-field>
                                     </div>
                                     <div fxFlex="50%" class="matero-col">
                                         <mat-form-field>
                                             <mat-label>Opt. Range</mat-label>
-                                            <input matInput formControlName="primaryOptRange" type="number" min="0" step="1" [(ngModel)]="fakeVar" required>
+                                            <input matInput type="number" min="0" step="1" [(ngModel)]="redStats.primaryOptRange" (ngModelChange)="updateChart($event)" name="primaryOptRange" required>
                                         </mat-form-field>
                                         <mat-form-field>
                                             <mat-label>Drop</mat-label>
-                                            <input matInput formControlName="primaryDropOff" type="number" min="0" step="1" [(ngModel)]="fakeVar" required>
+                                            <input matInput type="number" min="0" step="1" [(ngModel)]="redStats.primaryDropOff" (ngModelChange)="updateChart($event)" name="primaryDropOff" required>
                                         </mat-form-field>
                                         <mat-form-field>
                                             <mat-label>Max Hits</mat-label>
-                                            <input matInput formControlName="primaryMaxHits" type="number" min="0" step="1" [(ngModel)]="fakeVar" required>
+                                            <input matInput type="number" min="0" step="1" [(ngModel)]="redStats.primaryMaxHits" (ngModelChange)="updateChart($event)" name="primaryMaxHits" required>
                                         </mat-form-field>
                                     </div>
                                 </div>
@@ -382,49 +382,49 @@
                             <section fxFlex="100%" fxFlex.gt-sm="25%" class="matero-col">
                                 <h3>Secondary Weapon
                                     <button mat-icon-button>
-                                        <mat-icon color="accent">file_copy</mat-icon>
+                                        <mat-icon color="accent"(click)="copySecondaryWeapon(redStats, blueStats)">file_copy</mat-icon>
                                     </button>
                                 </h3>
                                 <mat-form-field class="w-full">
                                     <mat-label>Weapon Class</mat-label>
-                                    <mtx-select [items]="weaponClasses | keyvalue" bindLabel="value" bindValue="key" [(ngModel)]="fakeVar" formControlName="secondaryClass" required>
+                                    <mtx-select [items]="weaponClasses | keyvalue" bindLabel="value" bindValue="value" [(ngModel)]="redStats.secondaryClass" (ngModelChange)="updateChart($event)" name="secondaryClass" required>
                                     </mtx-select>
                                 </mat-form-field>
                                 <mat-form-field class="w-full">
                                     <mat-label>Damage Type</mat-label>
-                                    <mtx-select [items]="damageTypes | keyvalue" bindLabel="value" bindValue="key" [(ngModel)]="fakeVar" formControlName="secondaryType" required>
+                                    <mtx-select [items]="damageTypes | keyvalue" bindLabel="value" bindValue="value" [(ngModel)]="redStats.secondaryType" (ngModelChange)="updateChart($event)" name="secondaryType" required>
                                     </mtx-select>
                                 </mat-form-field>
-                                <mat-slide-toggle class="form-manual-spacing" formControlName="secondaryDualWield" [(ngModel)]="fakeVar">
-                                    Dual Wielding - Offhand
+                                <mat-slide-toggle class="form-manual-spacing" [(ngModel)]="redStats.secondaryDualWield" (ngModelChange)="updateChart($event)" name="secondaryDualWield">
+                                  Dual Wielding - Offhand
                                 </mat-slide-toggle>
                                 <div fxLayout="row wrap" class="matero-row">
                                     <div fxFlex="50%" class="matero-col">
                                         <mat-form-field>
                                             <mat-label>Firepower</mat-label>
-                                            <input matInput formControlName="secondaryFirepower" type="number" min="0" step="1" [(ngModel)]="fakeVar" required>
+                                            <input matInput type="number" min="0" step="1" [(ngModel)]="redStats.secondaryFirepower" name="secondaryFirepower" required>
                                         </mat-form-field>
                                         <mat-form-field>
                                             <mat-label>Min Damage</mat-label>
-                                            <input matInput formControlName="secondaryMinDamage" type="number" min="0" step="1" [(ngModel)]="fakeVar" required>
+                                            <input matInput type="number" min="0" step="1" [(ngModel)]="redStats.secondaryMinDamage" (ngModelChange)="updateChart($event)" name="secondaryMinDamage" required>
                                         </mat-form-field>
                                         <mat-form-field>
                                             <mat-label>Max Damage</mat-label>
-                                            <input matInput formControlName="secondaryMaxDamage" type="number" min="0" step="1" [(ngModel)]="fakeVar" required>
+                                            <input matInput type="number" min="0" step="1" [(ngModel)]="redStats.secondaryMaxDamage" (ngModelChange)="updateChart($event)" name="secondaryMaxDamage" required>
                                         </mat-form-field>
                                     </div>
                                     <div fxFlex="50%" class="matero-col">
                                         <mat-form-field>
                                             <mat-label>Opt. Range</mat-label>
-                                            <input matInput formControlName="secondaryOptRange" type="number" min="0" step="1" [(ngModel)]="fakeVar" required>
+                                            <input matInput type="number" min="0" step="1" [(ngModel)]="redStats.secondaryOptRange" (ngModelChange)="updateChart($event)" name="secondaryOptRange" required>
                                         </mat-form-field>
                                         <mat-form-field>
                                             <mat-label>Drop</mat-label>
-                                            <input matInput formControlName="secondaryDropOff" type="number" min="0" step="1" [(ngModel)]="fakeVar" required>
+                                            <input matInput type="number" min="0" step="1" [(ngModel)]="redStats.secondaryDropOff" (ngModelChange)="updateChart($event)" name="secondaryDropOff" required>
                                         </mat-form-field>
                                         <mat-form-field>
                                             <mat-label>Max Hits</mat-label>
-                                            <input matInput formControlName="secondaryMaxHits" type="number" min="0" step="1" [(ngModel)]="fakeVar" required>
+                                            <input matInput type="number" min="0" step="1" [(ngModel)]="redStats.secondaryMaxHits" (ngModelChange)="updateChart($event)" name="secondaryMaxHits" required>
                                         </mat-form-field>
                                     </div>
                                 </div>
@@ -452,7 +452,7 @@
                 <mat-card>
                     <div fxLayout="row wrap" class="matero-row m-b-16">
                         <section fxFlex="100%" fxFlex.gt-sm="49%" class="matero-col">
-                            <h3>Blue Stormies</h3>
+                            <h3>{{blueResult.squadName}}</h3>
                             <table class="spaced-out blue-team">
                                 <tr>
                                     <td class="header-cell">Battles Won</td>
@@ -464,7 +464,7 @@
                                 </tr>
                                 <tr>
                                     <td class="header-cell">Average Units Left per Win</td>
-                                    <td>{{blueResult.unitsLeft}} of 0</td>
+                                    <td>{{blueResult.unitsLeft}} of {{blueResult.totalUnits}}</td>
                                 </tr>
                                 <tr>
                                     <td class="header-cell">Average Rounds to Win</td>
@@ -472,21 +472,21 @@
                                 </tr>
                                 <tr>
                                     <td class="header-cell">Average Unit HP Left per Win</td>
-                                    <td>{{blueResult.hpLeft}} of 0</td>
+                                    <td>{{blueResult.hpLeft}} of {{blueResult.maxHP}}</td>
                                 </tr>
                                 <tr>
                                     <td class="header-cell">Average Unit Shields Left per Win</td>
-                                    <td>{{blueResult.shieldsLeft}} of 0</td>
+                                    <td>{{blueResult.shieldsLeft}} of {{blueResult.maxShields}}</td>
                                 </tr>
                                 <tr>
                                     <td class="header-cell">Average Unit Ionic Left per Win</td>
-                                    <td>{{blueResult.ionicLeft}} of 0</td>
+                                    <td>{{blueResult.ionicLeft}} of {{blueResult.maxIonic}}</td>
                                 </tr>
                             </table>
                         </section>
                         <mat-divider [vertical]="true"></mat-divider>
                         <section fxFlex="100%" fxFlex.gt-sm="49%" class="matero-col">
-                            <h3>Red Riflemen</h3>
+                            <h3>{{redResult.squadName}}</h3>
                             <table class="spaced-out red-team">
                                 <tr>
                                     <td class="header-cell">Battles Won</td>
@@ -498,7 +498,7 @@
                                 </tr>
                                 <tr>
                                     <td class="header-cell">Average Units Left per Win</td>
-                                    <td>{{redResult.unitsLeft}} of 0</td>
+                                    <td>{{redResult.unitsLeft}} of {{redResult.totalUnits}}</td>
                                 </tr>
                                 <tr>
                                     <td class="header-cell">Average Rounds to Win</td>
@@ -506,15 +506,15 @@
                                 </tr>
                                 <tr>
                                     <td class="header-cell">Average Unit HP Left per Win</td>
-                                    <td>{{redResult.hpLeft}} of 0</td>
+                                    <td>{{redResult.hpLeft}} of {{redResult.maxHP}}</td>
                                 </tr>
                                 <tr>
                                     <td class="header-cell">Average Unit Shields Left per Win</td>
-                                    <td>{{redResult.shieldsLeft}} of 0</td>
+                                    <td>{{redResult.shieldsLeft}} of {{redResult.maxShields}}</td>
                                 </tr>
                                 <tr>
                                     <td class="header-cell">Average Unit Ionic Left per Win</td>
-                                    <td>{{redResult.ionicLeft}} of 0</td>
+                                    <td>{{redResult.ionicLeft}} of {{redResult.maxIonic}}</td>
                                 </tr>
                             </table>
                         </section>
@@ -524,14 +524,14 @@
                         <table fxFlex="50%" class="matero-col spaced-out">
                             <tr>
                                 <td>Number of Battles</td>
-                                <td><input matInput type="number" min="1" step="1" [(ngModel)]="fakeVar" required></td>
+                                <td><input matInput type="number" min="1" step="1" [(ngModel)]="simulation.battles" required></td>
                             </tr>
                             <tr>
-                                <td>Ties</td><td>0</td>
+                                <td>Ties</td><td>{{simulation.ties}}</td>
                             </tr>
                         </table>
                         <div fxFlex="50%" class="matero-col flex-center">
-                            <button mat-raised-button color="primary" [disabled]="!blueForm.valid || !redForm.valid">Simulate</button>
+                            <button mat-raised-button color="primary" [disabled]="!blueForm.form.valid || !redForm.form.valid" (click)="simulationTrigger()">Simulate</button>
                         </div>
                     </section>
                 </mat-card>

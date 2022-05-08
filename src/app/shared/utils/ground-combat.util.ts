@@ -326,7 +326,14 @@ export class GroundCombat {
 
     const distance1 = Math.abs(weapon1.optRange - currRange);
     const distance2 = Math.abs(weapon2.optRange - currRange);
-    return distance2 < distance1 ? weapon2 : weapon1;
+    let selectedWeapon = weapon1;
+    selectedWeapon = distance2 < distance1 ? weapon2 : weapon1;
+
+    // handle case when range is over 0 and the selected weapon is NPW
+    if (currRange > 0 && selectedWeapon.weaponClass === WeaponClass.NonProjectile)
+      selectedWeapon = (selectedWeapon === weapon1 && weapon2.weaponClass != WeaponClass.NonProjectile) ? weapon2 : weapon1;
+
+    return selectedWeapon;
   }
 
   // randomly select the enemy target, taking combat tactic currently active into account

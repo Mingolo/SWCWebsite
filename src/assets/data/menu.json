@@ -1,15 +1,8 @@
 {
   "menu": [
     {
-      "route": "dashboard",
-      "name": "dashboard",
-      "label": "dashboard",
-      "type": "link",
-      "icon": "dashboard"
-    },
-    {
       "route": "simulation",
-      "name": "Combat Simulation",      
+      "name": "Combat Simulation",
       "label": "Combat Simulation",
       "type": "sub",
       "icon": "whatshot",

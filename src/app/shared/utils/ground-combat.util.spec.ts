@@ -87,6 +87,54 @@ describe('selectWeapon()', () => {
     weapon2.optRange = 150;
     expect(GroundCombat.selectWeapon(weapon1, weapon2, 400)).toBe(weapon2);
   });
+
+  it('should return weapon2 if weapon1 is an NPW weapon, while weapon2 is not and range is over 0', () => {
+    weapon1.optRange = 0;
+    weapon1.weaponClass = WeaponClass.NonProjectile;
+    weapon2.optRange = 7;
+    weapon2.weaponClass = WeaponClass.Projectile;
+    expect(GroundCombat.selectWeapon(weapon1, weapon2, 1)).toBe(weapon2);
+  });
+
+  it('should return weapon1 if weapon2 is an NPW weapon, while weapon1 is not and range is over 0', () => {
+    weapon1.optRange = 7;
+    weapon1.weaponClass = WeaponClass.Projectile;
+    weapon2.optRange = 0;
+    weapon2.weaponClass = WeaponClass.NonProjectile;
+    expect(GroundCombat.selectWeapon(weapon1, weapon2, 1)).toBe(weapon1);
+  });
+
+  it('should return weapon2 if weapon1 is an NPW weapon, and weapon2 is closer to its optimum range', () => {
+    weapon1.optRange = 0;
+    weapon1.weaponClass = WeaponClass.NonProjectile;
+    weapon2.optRange = 7;
+    weapon2.weaponClass = WeaponClass.Projectile;
+    expect(GroundCombat.selectWeapon(weapon1, weapon2, 5)).toBe(weapon2);
+  });
+
+  it('should return weapon2 if weapon2 is an NPW weapon and range is 0', () => {
+    weapon1.optRange = 7;
+    weapon1.weaponClass = WeaponClass.Projectile;
+    weapon2.optRange = 0;
+    weapon2.weaponClass = WeaponClass.NonProjectile;
+    expect(GroundCombat.selectWeapon(weapon1, weapon2, 0)).toBe(weapon2);
+  });
+
+  it('should return weapon1 if both weapons are NPW and range is 0', () => {
+    weapon1.optRange = 0;
+    weapon1.weaponClass = WeaponClass.NonProjectile;
+    weapon2.optRange = 0;
+    weapon2.weaponClass = WeaponClass.NonProjectile;
+    expect(GroundCombat.selectWeapon(weapon1, weapon2, 0)).toBe(weapon1);
+  });
+
+  it('should return weapon1 if both weapons are NPW and range is 1', () => {
+    weapon1.optRange = 0;
+    weapon1.weaponClass = WeaponClass.NonProjectile;
+    weapon2.optRange = 0;
+    weapon2.weaponClass = WeaponClass.NonProjectile;
+    expect(GroundCombat.selectWeapon(weapon1, weapon2, 1)).toBe(weapon1);
+  });
 });
 
 describe('checkBattleResul()', () => {
