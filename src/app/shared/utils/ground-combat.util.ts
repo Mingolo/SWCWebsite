@@ -261,15 +261,14 @@ export class GroundCombat {
       for (let i = 0; i < weapon.maxHits; i++) {
         if (attackTactic === Tactic.SpreadFire)
           defender = this.rollTarget(defendSquad, attackTactic);
-        this.calcAttackHit(attacker, defender, range, weapon);
+        this.calcAttackHit(attacker, defender, range, weapon, false);
       }
       // add damage from dual wielding
-      if (attacker.secondaryWeapon.dualWielded) {
-        weapon = attacker.secondaryWeapon;
+      if (weapon.dualWielded) {
         for (let i = 0; i < weapon.maxHits; i++) {
           if (attackTactic === Tactic.SpreadFire)
             defender = this.rollTarget(defendSquad, attackTactic);
-          this.calcAttackHit(attacker, defender, range, weapon);
+          this.calcAttackHit(attacker, defender, range, weapon, true);
         }
       }
     })
@@ -281,15 +280,14 @@ export class GroundCombat {
       for (let i = 0; i < weapon.maxHits; i++) {
         if (defendTactic === Tactic.SpreadFire)
           defender = this.rollTarget(attackSquad, defendTactic);
-        this.calcAttackHit(attacker, defender, range, weapon);
+        this.calcAttackHit(attacker, defender, range, weapon, false);
       }
       // add damage from dual wielding
-      if (attacker.secondaryWeapon.dualWielded) {
-        weapon = attacker.secondaryWeapon;
+      if (weapon.dualWielded) {
         for (let i = 0; i < weapon.maxHits; i++) {
           if (defendTactic === Tactic.SpreadFire)
             defender = this.rollTarget(attackSquad, defendTactic);
-          this.calcAttackHit(attacker, defender, range, weapon);
+          this.calcAttackHit(attacker, defender, range, weapon, true);
         }
       }
     })
@@ -299,13 +297,13 @@ export class GroundCombat {
   }
 
   // calculate and process a single shot from a weapon, including calculating whether the shot hits or not
-  public static calcAttackHit (attacker: Combatant, defender: Combatant, attackRange: number, attackWeapon: Weapon) {
+  public static calcAttackHit (attacker: Combatant, defender: Combatant, attackRange: number, attackWeapon: Weapon, dualWielded: boolean) {
     const hitChance = this.getHitChance(
       defender.dodge, attackWeapon.optRange, attackRange,
       attackWeapon.dropOff, attacker.dex, attacker.pwSkill,
       attacker.npwSkill, attacker.hwSkill, attacker.lightSkill,
       attacker.force, attackWeapon.weaponClass, attackWeapon.damageType,
-      attackWeapon.dualWielded, attacker.unitType);
+      dualWielded, attacker.unitType);
     if (this.rollHit(hitChance)) {
       const weaponSkill = this.getWeaponSkill(
         attacker.pwSkill, attacker.npwSkill, attacker.hwSkill,
@@ -314,16 +312,13 @@ export class GroundCombat {
       const damage = this.rollDamage (
         weaponSkill, attackWeapon.minDamage, attackWeapon.maxDamage,
         attackWeapon.firepower, defender.armor, attackWeapon.damageType,
-        attacker.unitType, defender.unitType, attackWeapon.dualWielded);
+        attacker.unitType, defender.unitType, dualWielded);
       this.applyDamage(defender, damage, attackWeapon.damageType);
     }
   }
 
   // select correct weapon for this range
   public static selectWeapon (weapon1: Weapon, weapon2: Weapon, currRange: number) : Weapon {
-    if (weapon2.dualWielded)
-      return weapon1;
-
     const distance1 = Math.abs(weapon1.optRange - currRange);
     const distance2 = Math.abs(weapon2.optRange - currRange);
     let selectedWeapon = weapon1;

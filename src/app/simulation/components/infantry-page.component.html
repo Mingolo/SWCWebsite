@@ -133,6 +133,9 @@
                                     <mtx-select [items]="damageTypes | keyvalue" bindLabel="value" bindValue="value" [(ngModel)]="blueStats.primaryType" (ngModelChange)="updateChart($event)" name="primaryType" required>
                                     </mtx-select>
                                 </mat-form-field>
+                                <mat-slide-toggle class="form-manual-spacing" [(ngModel)]="blueStats.primaryDualWield" (ngModelChange)="updateChart($event)" name="primaryDualWield">
+                                  Dual Wielding
+                                </mat-slide-toggle>
                                 <div fxLayout="row wrap" class="matero-row">
                                     <div fxFlex="50%" class="matero-col">
                                         <mat-form-field>
@@ -181,7 +184,7 @@
                                     </mtx-select>
                                 </mat-form-field>
                                 <mat-slide-toggle class="form-manual-spacing" [(ngModel)]="blueStats.secondaryDualWield" (ngModelChange)="updateChart($event)" name="secondaryDualWield">
-                                  Dual Wielding - Offhand
+                                  Dual Wielding
                                 </mat-slide-toggle>
                                 <div fxLayout="row wrap" class="matero-row">
                                     <div fxFlex="50%" class="matero-col">
@@ -348,6 +351,9 @@
                                     <mtx-select [items]="damageTypes | keyvalue" bindLabel="value" bindValue="value" [(ngModel)]="redStats.primaryType" (ngModelChange)="updateChart($event)" name="primaryType" required>
                                     </mtx-select>
                                 </mat-form-field>
+                                <mat-slide-toggle class="form-manual-spacing" [(ngModel)]="redStats.primaryDualWield" (ngModelChange)="updateChart($event)" name="primaryDualWield">
+                                  Dual Wielding
+                                </mat-slide-toggle>
                                 <div fxLayout="row wrap" class="matero-row">
                                     <div fxFlex="50%" class="matero-col">
                                         <mat-form-field>
@@ -396,7 +402,7 @@
                                     </mtx-select>
                                 </mat-form-field>
                                 <mat-slide-toggle class="form-manual-spacing" [(ngModel)]="redStats.secondaryDualWield" (ngModelChange)="updateChart($event)" name="secondaryDualWield">
-                                  Dual Wielding - Offhand
+                                  Dual Wielding
                                 </mat-slide-toggle>
                                 <div fxLayout="row wrap" class="matero-row">
                                     <div fxFlex="50%" class="matero-col">

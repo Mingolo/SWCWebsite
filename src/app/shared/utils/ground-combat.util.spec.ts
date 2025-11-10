@@ -68,11 +68,11 @@ describe('selectWeapon()', () => {
     expect(GroundCombat.selectWeapon(weapon1, weapon2, 4)).toBe(weapon2);
   });
 
-  it('should return weapon1 if weapon2 is a dualWielded offhand', () => {
+  it('should return weapon2 if weapon2 is dualWielded but its optimal range is closest to current range', () => {
     weapon1.optRange = 7;
     weapon2.optRange = 2;
     weapon2.dualWielded = true;
-    expect(GroundCombat.selectWeapon(weapon1, weapon2, 4)).toBe(weapon1);
+    expect(GroundCombat.selectWeapon(weapon1, weapon2, 4)).toBe(weapon2);
   });
 
   it('should return weapon1 if its optimal range is closest to current range and  weapon2 is a dualWielded offhand', () => {

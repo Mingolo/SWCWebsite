@@ -148,8 +148,8 @@ export class InfantryPageComponent implements OnInit, AfterViewInit {
       squad.secondaryDropOff, squad.secondaryMaxHits, squad.secondaryDualWield);
 
     for (let i = 0; i <= 21; i++) {
-      let primaryDamage = 0;
-      let secondaryDamage = 0;
+      let mainDamage = 0;
+      let offhandDamage = 0;
       const weapon = GroundCombat.selectWeapon(primaryWeapon, secondaryWeapon, i);
       const unitType = squad.isDroid ? UnitType.Mechanical : UnitType.Soft;
 
@@ -159,33 +159,27 @@ export class InfantryPageComponent implements OnInit, AfterViewInit {
         weapon.dropOff, squad.dex, squad.pwSkill,
         squad.npwSkill, 0, squad.lightSkill,
         squad.force, weapon.weaponClass, weapon.damageType,
-        weapon.dualWielded, unitType)/100;
+        false, unitType)/100;
       const weaponSkill = GroundCombat.getWeaponSkill(
         squad.pwSkill, squad.npwSkill, 0,
         squad.lightSkill, squad.force, weapon.weaponClass,
         weapon.damageType);
       const damageSkillMod = GroundCombat.getDamageSkillMod(weaponSkill);
-      primaryDamage = GroundCombat.getAvgBaseDamage(weaponSkill, damageSkillMod, weapon.minDamage, weapon.maxDamage) * weapon.maxHits * hitChance;
+      mainDamage = GroundCombat.getAvgBaseDamage(weaponSkill, damageSkillMod, weapon.minDamage, weapon.maxDamage) * weapon.maxHits * hitChance;
 
       // add in dual wielding
-      if (secondaryWeapon.dualWielded) {
-        const weapon2 =  secondaryWeapon;
+      if (weapon.dualWielded) {
         const hitChance2 = GroundCombat.getHitChance(
-          0, weapon2.optRange, i,
-          weapon2.dropOff, squad.dex, squad.pwSkill,
+          0, weapon.optRange, i,
+          weapon.dropOff, squad.dex, squad.pwSkill,
           squad.npwSkill, 0, squad.lightSkill,
-          squad.force, weapon2.weaponClass, weapon2.damageType,
-          weapon2.dualWielded, unitType)/100;
-        const weaponSkill2 = GroundCombat.getWeaponSkill(
-          squad.pwSkill, squad.npwSkill, 0,
-          squad.lightSkill, squad.force, weapon2.weaponClass,
-          weapon2.damageType);
-        const damageSkillMod2 = GroundCombat.getDamageSkillMod(weaponSkill2);
-        secondaryDamage = (GroundCombat.getAvgBaseDamage(weaponSkill2, damageSkillMod2, weapon2.minDamage, weapon2.maxDamage) * 0.5) * weapon2.maxHits * hitChance2;
+          squad.force, weapon.weaponClass, weapon.damageType,
+          true, unitType)/100;
+        offhandDamage = (GroundCombat.getAvgBaseDamage(weaponSkill, damageSkillMod, weapon.minDamage, weapon.maxDamage) * 0.5) * weapon.maxHits * hitChance2;
       }
 
       // calculate final avg damage and add to return array
-      data.push(Math.round(primaryDamage + secondaryDamage));
+      data.push(Math.round(mainDamage + offhandDamage));
     }
 
     return data;
