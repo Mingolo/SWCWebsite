@@ -1,0 +1,48 @@
+# This file specifies files that are *not* uploaded to Google Cloud Platform
+# using gcloud. It follows the same syntax as .gitignore, with the addition of
+# "#!include" directives (which insert the entries of the given .gitignore-style
+# file at that point).
+
+.git
+.gitignore
+.gcloudignore
+
+# Node.js dependencies:
+node_modules/
+
+# Source files and configuration:
+src/
+tsconfig.json
+tsconfig.app.json
+tsconfig.spec.json
+webpack.config.js
+readme.md
+ssl/
+tslint.json
+LICENSE
+.editorconfig
+.dockerignore
+.vscode
+.prettierignore
+.prettierrc
+.stylelintrc
+*.bat
+.eslintrc.json
+angular.json
+package-lock.json
+package.json
+
+# Hidden files and directories:
+^(.*/)?\..*$
+
+# All Markdown files:
+^(.*/)?.*\.md$
+
+# All YAML files:
+**/*.yaml$
+
+# Except for app.yaml:
+!app.yaml
+
+# Ensure the dist directory is included:
+!dist/
