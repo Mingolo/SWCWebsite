@@ -192,7 +192,7 @@ export class GroundCombat {
     let s1Tactic = s1TacticFirst;
     let s2Tactic = s2TacticFirst;
     let battleResult = this.checkBattleResult(squad1, squad2);
-    let round = 1;
+    let round = 0;
     while (battleResult === 0 && round <= 500) {
       // check if it's time to change tactics
       if (round === s1TacticSwitchRound)
@@ -203,9 +203,9 @@ export class GroundCombat {
       // squad1 is attacker
       this.attackRound(squad1, squad2, s1Range, s1Tactic, s2Tactic, round);
       battleResult = this.checkBattleResult(squad1, squad2);
+      round++;
       if (battleResult != 0)
         break;
-      round++;
       if (round > 500)
         break;
 
