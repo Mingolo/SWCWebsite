@@ -237,7 +237,6 @@ export class InfantryPageComponent implements OnInit, AfterViewInit {
     this.blueStats.hp = 0;
     this.blueStats.hpMult = 0;
     this.blueStats.level = 0;
-    this.blueStats.armor = 0;
     this.blueStats.deflectors = 0;
     this.blueStats.ionic = 0;
     this.updateChart(null);
@@ -247,7 +246,6 @@ export class InfantryPageComponent implements OnInit, AfterViewInit {
     this.redStats.hp = 0;
     this.redStats.hpMult = 0;
     this.redStats.level = 0;
-    this.redStats.armor = 0;
     this.redStats.deflectors = 0;
     this.redStats.ionic = 0;
     this.updateChart(null);
